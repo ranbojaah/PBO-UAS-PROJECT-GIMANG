@@ -481,12 +481,10 @@
                   <Color blue="d4" green="c4" red="ca" type="rgb"/>
                 </Property>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="5">
+                  <StringArray count="3">
                     <StringItem index="0" value="Pilih Kondisi"/>
-                    <StringItem index="1" value="Item 1"/>
-                    <StringItem index="2" value="Item 2"/>
-                    <StringItem index="3" value="Item 3"/>
-                    <StringItem index="4" value="Item 4"/>
+                    <StringItem index="1" value="Baru"/>
+                    <StringItem index="2" value="Bekas"/>
                   </StringArray>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -505,6 +503,9 @@
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="29" green="20" red="20" type="rgb"/>
+                </Property>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Verdana" size="14" style="0"/>
                 </Property>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="d4" green="c4" red="ca" type="rgb"/>
@@ -625,7 +626,7 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="150" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="151" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -655,7 +656,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTextArea" name="jTextArea1">
+                <Component class="javax.swing.JTextArea" name="taDeskripsi">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="29" green="20" red="20" type="rgb"/>

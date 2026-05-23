@@ -4,6 +4,14 @@
  */
 package Admin.Listing;
 
+import Seller.Listing.ListingForm;
+import entity.user;
+import entity.listing;
+import implement.ListingImpl;
+import java.sql.SQLException;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.table.JTableHeader;
@@ -19,16 +27,29 @@ import javax.swing.border.Border;
 public class ListingView extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ListingView.class.getName());
-
+    
+    private user currentUser;
+    private ListingImpl listingImpl = new ListingImpl();
+    private String selectedListingId = null;
+    private String selectedStatus = "SEMUA";
     /**
      * Creates new form ListingView
      */
-    public ListingView() {
+    public ListingView(user usr) {
         initComponents();
+        this.setLocationRelativeTo(this);
+        this.currentUser = usr;
         
         styleTable();
         styleToggleButton();
         setupActionPanel();
+        setupRole();
+        loadListing();
+        
+        tfDeskripsi.setLineWrap(true);
+        tfDeskripsi.setWrapStyleWord(true);
+        tfDeskripsi.setEditable(false);
+        tfDeskripsi.setOpaque(false);
     }
     
     private void styleTable(){
@@ -220,6 +241,130 @@ public class ListingView extends javax.swing.JFrame {
 
     }
     
+    private void fillTable(List<listing> data) {
+
+        DefaultTableModel model = new DefaultTableModel();
+
+        model.addColumn("ID");
+        model.addColumn("GAME");
+        model.addColumn("SELLER");
+        model.addColumn("HARGA");
+        model.addColumn("KONDISI");
+        model.addColumn("STATUS");
+
+        for (listing l : data) {
+            model.addRow(new Object[]{
+                l.getListingId(),
+                l.getGameTitle(),
+                l.getSellerUsername(),
+                l.getPrice(),
+                l.getCondition(),
+                l.getStatus()
+            });
+        }
+
+        tbListing.setModel(model);
+
+        lbTotalListing.setText(data.size() + " Listing Tercatat");
+    }
+    
+    private void setupRole() {
+        String role = currentUser.getrole();
+
+        if (role.equalsIgnoreCase("seller")) {
+            btTambah.setVisible(true);
+            btnEdit.setVisible(true);
+
+            btnVerifikasi.setVisible(false);
+            btnHapus.setVisible(false);
+        } 
+        else if (role.equalsIgnoreCase("admin")) {
+            btTambah.setVisible(false);
+            btnEdit.setVisible(false);
+
+            btnVerifikasi.setVisible(true);
+            btnHapus.setVisible(true);
+        }
+    }
+    
+    public void loadListing() {
+        try {
+            List<listing> data;
+
+            String role = currentUser.getrole();
+
+            if (role.equalsIgnoreCase("admin")) {
+                data = listingImpl.getAll();
+            } else {
+                data = listingImpl.getBySeller(currentUser.getIdUser());
+            }
+
+            fillTable(data);
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Gagal memuat data listing: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+    
+    private void applySearchAndFilter() {
+        try {
+            String keyword = tfCari.getText();
+            String role = currentUser.getrole();
+            String sellerId = currentUser.getIdUser();
+
+            List<listing> data = listingImpl.search(
+                keyword,
+                selectedStatus,
+                role,
+                sellerId
+            );
+
+            fillTable(data);
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Gagal mencari data listing: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+    
+    private void showDetail(String listingId) {
+        try {
+            listing l = listingImpl.getById(listingId);
+
+            if (l == null) {
+                return;
+            }
+
+            detGame.setText(l.getGameTitle());
+            lbId.setText(l.getListingId());
+            lbStatus.setText(l.getStatus());
+            lbTanggal.setText(String.valueOf(l.getListedDate()));
+            lbHarga.setText("Rp " + l.getPrice());
+            lbUser.setText(l.getSellerUsername());
+            lbKondisi.setText(l.getCondition());
+            tfDeskripsi.setText(l.getDescription());
+
+            selectedListingId = l.getListingId();
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Gagal menampilkan detail listing: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -232,7 +377,7 @@ public class ListingView extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lbTotalListing = new javax.swing.JLabel();
         tfCari = new javax.swing.JTextField();
         btTambah = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
@@ -254,22 +399,25 @@ public class ListingView extends javax.swing.JFrame {
         panelHapus = new javax.swing.JPanel();
         btnHapus = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
+        detGame = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        lbId = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        lbStatus = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        lbTanggal = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
+        lbHarga = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
+        lbKondisi = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tfDeskripsi = new javax.swing.JTextArea();
+        jLabel16 = new javax.swing.JLabel();
+        lbUser = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Listing");
@@ -282,9 +430,9 @@ public class ListingView extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Listing");
 
-        jLabel2.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(148, 163, 184));
-        jLabel2.setText("0 Listing Tercatat");
+        lbTotalListing.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        lbTotalListing.setForeground(new java.awt.Color(148, 163, 184));
+        lbTotalListing.setText("0 Listing Tercatat");
 
         tfCari.setBackground(new java.awt.Color(30, 30, 48));
         tfCari.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
@@ -292,12 +440,18 @@ public class ListingView extends javax.swing.JFrame {
         tfCari.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(111, 108, 120)));
         tfCari.setMargin(new java.awt.Insets(2, 10, 2, 6));
         tfCari.addActionListener(this::tfCariActionPerformed);
+        tfCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tfCariKeyReleased(evt);
+            }
+        });
 
         btTambah.setBackground(new java.awt.Color(167, 139, 250));
         btTambah.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         btTambah.setForeground(new java.awt.Color(17, 17, 29));
         btTambah.setText("Tambah Listing");
         btTambah.setBorder(null);
+        btTambah.addActionListener(this::btTambahActionPerformed);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -307,7 +461,7 @@ public class ListingView extends javax.swing.JFrame {
                 .addGap(25, 25, 25)
                 .addComponent(jLabel1)
                 .addGap(38, 38, 38)
-                .addComponent(jLabel2)
+                .addComponent(lbTotalListing)
                 .addGap(88, 88, 88)
                 .addComponent(tfCari)
                 .addGap(70, 70, 70)
@@ -320,10 +474,10 @@ public class ListingView extends javax.swing.JFrame {
                 .addContainerGap(20, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2)
+                    .addComponent(lbTotalListing)
                     .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(17, 17, 17))
+                .addGap(8, 8, 8))
         );
 
         jPanel3.setBackground(new java.awt.Color(18, 18, 28));
@@ -337,6 +491,7 @@ public class ListingView extends javax.swing.JFrame {
         btnSemua.setText("Semua Listing");
         btnSemua.setBorder(null);
         btnSemua.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnSemua.addActionListener(this::btnSemuaActionPerformed);
         jPanel5.add(btnSemua);
 
         btnTersedia.setBackground(new java.awt.Color(18, 18, 28));
@@ -344,6 +499,7 @@ public class ListingView extends javax.swing.JFrame {
         btnTersedia.setForeground(new java.awt.Color(148, 163, 184));
         btnTersedia.setText("Tersedia");
         btnTersedia.setBorder(null);
+        btnTersedia.addActionListener(this::btnTersediaActionPerformed);
         jPanel5.add(btnTersedia);
 
         btnTerjual.setBackground(new java.awt.Color(18, 18, 28));
@@ -383,6 +539,11 @@ public class ListingView extends javax.swing.JFrame {
                 "ID", "GAME", "SELLER", "HARGA", "KONDISI", "STATUS"
             }
         ));
+        tbListing.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbListingMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(tbListing);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -426,7 +587,10 @@ public class ListingView extends javax.swing.JFrame {
         panelEdit.setLayout(panelEditLayout);
         panelEditLayout.setHorizontalGroup(
             panelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelEditLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         panelEditLayout.setVerticalGroup(
             panelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -442,6 +606,7 @@ public class ListingView extends javax.swing.JFrame {
         btnVerifikasi.setForeground(new java.awt.Color(17, 17, 29));
         btnVerifikasi.setText("Verifikasi");
         btnVerifikasi.setBorder(null);
+        btnVerifikasi.addActionListener(this::btnVerifikasiActionPerformed);
 
         javax.swing.GroupLayout panelVerifikasiLayout = new javax.swing.GroupLayout(panelVerifikasi);
         panelVerifikasi.setLayout(panelVerifikasiLayout);
@@ -463,6 +628,7 @@ public class ListingView extends javax.swing.JFrame {
         btnHapus.setForeground(new java.awt.Color(248, 113, 113));
         btnHapus.setText("Hapus Listing");
         btnHapus.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(248, 113, 113)));
+        btnHapus.addActionListener(this::btnHapusActionPerformed);
 
         javax.swing.GroupLayout panelHapusLayout = new javax.swing.GroupLayout(panelHapus);
         panelHapus.setLayout(panelHapusLayout);
@@ -500,32 +666,30 @@ public class ListingView extends javax.swing.JFrame {
 
         jPanel7.setBackground(new java.awt.Color(41, 41, 52));
 
-        jLabel4.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(226, 232, 240));
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel4.setText("Detail - Nama Game");
+        detGame.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
+        detGame.setForeground(new java.awt.Color(226, 232, 240));
+        detGame.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        detGame.setText("Detail - Nama Game");
 
         jLabel5.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(148, 163, 184));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel5.setText("Id Listing");
 
-        jLabel6.setBackground(new java.awt.Color(167, 139, 250));
-        jLabel6.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(167, 139, 250));
-        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel6.setText("L - 99821");
+        lbId.setBackground(new java.awt.Color(167, 139, 250));
+        lbId.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lbId.setForeground(new java.awt.Color(167, 139, 250));
+        lbId.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
 
         jLabel7.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(148, 163, 184));
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel7.setText("Status");
 
-        jLabel8.setBackground(new java.awt.Color(167, 139, 250));
-        jLabel8.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(16, 185, 129));
-        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel8.setText("Tersedia");
+        lbStatus.setBackground(new java.awt.Color(167, 139, 250));
+        lbStatus.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lbStatus.setForeground(new java.awt.Color(16, 185, 129));
+        lbStatus.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
 
         jLabel9.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(148, 163, 184));
@@ -537,62 +701,78 @@ public class ListingView extends javax.swing.JFrame {
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel10.setText("Dibuat Pada");
 
-        jLabel11.setBackground(new java.awt.Color(167, 139, 250));
-        jLabel11.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(226, 232, 240));
-        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel11.setText("12 Mar 2024");
+        lbTanggal.setBackground(new java.awt.Color(167, 139, 250));
+        lbTanggal.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lbTanggal.setForeground(new java.awt.Color(226, 232, 240));
+        lbTanggal.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
 
         jLabel12.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(148, 163, 184));
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel12.setText("HARGA & PENGIRIMAN");
+        jLabel12.setText("HARGA");
 
         jLabel13.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(148, 163, 184));
         jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel13.setText("Harga Satuan");
 
-        jLabel14.setBackground(new java.awt.Color(167, 139, 250));
-        jLabel14.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        jLabel14.setForeground(new java.awt.Color(16, 185, 129));
-        jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel14.setText("Rp 450.000");
-
-        jLabel15.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        jLabel15.setForeground(new java.awt.Color(148, 163, 184));
-        jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel15.setText("Metode");
-
-        jLabel16.setBackground(new java.awt.Color(167, 139, 250));
-        jLabel16.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        jLabel16.setForeground(new java.awt.Color(226, 232, 240));
-        jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel16.setText("Digital Key");
+        lbHarga.setBackground(new java.awt.Color(167, 139, 250));
+        lbHarga.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lbHarga.setForeground(new java.awt.Color(16, 185, 129));
+        lbHarga.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
 
         jLabel17.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel17.setForeground(new java.awt.Color(148, 163, 184));
         jLabel17.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel17.setText("INFORMASI PENJUAL");
 
-        jLabel18.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        jLabel18.setForeground(new java.awt.Color(148, 163, 184));
-        jLabel18.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel18.setText("Username");
+        lbKondisi.setBackground(new java.awt.Color(167, 139, 250));
+        lbKondisi.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lbKondisi.setForeground(new java.awt.Color(226, 232, 240));
+        lbKondisi.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbKondisi.setText(" ");
 
-        jLabel19.setBackground(new java.awt.Color(167, 139, 250));
-        jLabel19.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        jLabel19.setForeground(new java.awt.Color(226, 232, 240));
-        jLabel19.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel19.setText("IronFist");
+        jLabel15.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        jLabel15.setForeground(new java.awt.Color(148, 163, 184));
+        jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel15.setText("Kondisi");
+
+        jLabel14.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        jLabel14.setForeground(new java.awt.Color(148, 163, 184));
+        jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel14.setText("DESKRIPSI");
+
+        jScrollPane1.setBackground(new java.awt.Color(41, 41, 52));
+        jScrollPane1.setBorder(null);
+
+        tfDeskripsi.setBackground(new java.awt.Color(41, 41, 52));
+        tfDeskripsi.setColumns(20);
+        tfDeskripsi.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        tfDeskripsi.setForeground(new java.awt.Color(226, 232, 240));
+        tfDeskripsi.setRows(5);
+        jScrollPane1.setViewportView(tfDeskripsi);
+
+        jLabel16.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        jLabel16.setForeground(new java.awt.Color(148, 163, 184));
+        jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel16.setText("Username");
+
+        lbUser.setBackground(new java.awt.Color(167, 139, 250));
+        lbUser.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lbUser.setForeground(new java.awt.Color(16, 185, 129));
+        lbUser.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(detGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lbKondisi, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -601,70 +781,83 @@ public class ListingView extends javax.swing.JFrame {
                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbId, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)))))
+                                .addComponent(lbStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lbTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)))))
                 .addGap(36, 36, 36)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
-                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(1, 1, 1))
+                        .addComponent(lbHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbUser, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGap(5, 5, 5)
+                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addComponent(jLabel4)
+                .addComponent(detGame)
                 .addGap(20, 20, 20)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
-                            .addComponent(jLabel6))
+                            .addComponent(lbId))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel10)
-                            .addComponent(jLabel11)))
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel7Layout.createSequentialGroup()
-                                .addComponent(jLabel12)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel7)
+                                .addGap(18, 18, 18)
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel13)
-                                    .addComponent(jLabel14)))
+                                    .addComponent(jLabel10)
+                                    .addComponent(lbTanggal)))
                             .addGroup(jPanel7Layout.createSequentialGroup()
-                                .addComponent(jLabel17)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel18)
-                                    .addComponent(jLabel19))))
+                                .addComponent(lbStatus)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel7Layout.createSequentialGroup()
+                                        .addGap(28, 28, 28)
+                                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jLabel16)
+                                            .addComponent(lbUser)))
+                                    .addGroup(jPanel7Layout.createSequentialGroup()
+                                        .addComponent(jLabel17)
+                                        .addGap(28, 28, 28)))))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel15)
-                            .addComponent(jLabel16))
-                        .addGap(34, 34, 34)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(lbKondisi)))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel14))
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jScrollPane1))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel13)
+                                    .addComponent(lbHarga))
+                                .addGap(133, 133, 133)))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -673,8 +866,8 @@ public class ListingView extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 752, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -684,7 +877,9 @@ public class ListingView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(22, 22, 22))))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -729,15 +924,171 @@ public class ListingView extends javax.swing.JFrame {
 
     private void btnTerjualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTerjualActionPerformed
         // TODO add your handling code here:
+         selectedStatus = "TERJUAL";
+        applySearchAndFilter();
     }//GEN-LAST:event_btnTerjualActionPerformed
 
     private void btnProsesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProsesActionPerformed
         // TODO add your handling code here:
+        selectedStatus = "PROSES";
+        applySearchAndFilter();
+
     }//GEN-LAST:event_btnProsesActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
+         if (selectedListingId == null) {
+            JOptionPane.showMessageDialog(this, "Silakan pilih listing terlebih dahulu!");
+            return;
+        }
+
+        try {
+            listing l = listingImpl.getById(selectedListingId);
+            if (l == null) {
+                JOptionPane.showMessageDialog(this, "Listing tidak ditemukan!");
+                return;
+            }
+
+            // Cek status TERJUAL di ListingView
+            if (l.getStatus().equalsIgnoreCase("TERJUAL")) {
+                JOptionPane.showMessageDialog(this, "Listing TERJUAL tidak bisa diedit!");
+                return; // jangan panggil ListingForm
+            }
+
+            // Kalau bukan TERJUAL, buka form edit
+            ListingForm form = new ListingForm(currentUser, this, l);
+            form.setVisible(true);
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal load listing: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnEditActionPerformed
+
+    private void tbListingMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbListingMouseClicked
+        // TODO add your handling code here:
+        int row = tbListing.getSelectedRow();
+        if (row >= 0) {
+            selectedListingId = tbListing.getValueAt(row, 0).toString();
+
+            showDetail(selectedListingId);
+        }
+    }//GEN-LAST:event_tbListingMouseClicked
+
+    private void tfCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tfCariKeyReleased
+        // TODO add your handling code here:
+        applySearchAndFilter();
+    }//GEN-LAST:event_tfCariKeyReleased
+
+    private void btnSemuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSemuaActionPerformed
+        // TODO add your handling code here:
+        selectedStatus = "SEMUA";
+        applySearchAndFilter();
+    }//GEN-LAST:event_btnSemuaActionPerformed
+
+    private void btnTersediaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTersediaActionPerformed
+        // TODO add your handling code here:
+        selectedStatus = "TERSEDIA";
+        applySearchAndFilter();
+    }//GEN-LAST:event_btnTersediaActionPerformed
+
+    private void btnVerifikasiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerifikasiActionPerformed
+        // TODO add your handling code here:
+        if (selectedListingId == null) {
+            JOptionPane.showMessageDialog(this,
+                "Silakan pilih listing terlebih dahulu",
+                "Peringatan",
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        try {
+            // Ambil data listing
+            listing l = listingImpl.getById(selectedListingId);
+
+            if (l == null) {
+                JOptionPane.showMessageDialog(this,
+                    "Listing tidak ditemukan",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            // Cek status, hanya ubah PROSES menjadi TERSEDIA
+            if (l.getStatus().equalsIgnoreCase("PROSES")) {
+                listingImpl.updateStatus(selectedListingId, "TERSEDIA");
+                JOptionPane.showMessageDialog(this,
+                    "Listing berhasil diverifikasi",
+                    "Sukses",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+            } else {
+                JOptionPane.showMessageDialog(this,
+                    "Hanya listing dengan status PROSES yang bisa diverifikasi",
+                    "Info",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+
+            // Reload tabel
+            applySearchAndFilter();
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                "Gagal memperbarui status: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }//GEN-LAST:event_btnVerifikasiActionPerformed
+
+    private void btTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btTambahActionPerformed
+        // TODO add your handling code here:
+        ListingForm form = new ListingForm(currentUser, this, null);
+        form.setVisible(true);
+    }//GEN-LAST:event_btTambahActionPerformed
+
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        // TODO add your handling code here:
+        if (selectedListingId == null) {
+            JOptionPane.showMessageDialog(this, "Silakan pilih listing terlebih dahulu!");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Apakah Anda yakin ingin menghapus listing ini?",
+            "Konfirmasi Hapus",
+            JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm != JOptionPane.YES_OPTION) {
+            return; // batal
+        }
+
+        try {
+            listing l = listingImpl.getById(selectedListingId);
+            if (l == null) {
+                JOptionPane.showMessageDialog(this, "Listing tidak ditemukan!");
+                return;
+            }
+
+            // opsional: cek status TERJUAL, tidak boleh dihapus
+            if (l.getStatus().equalsIgnoreCase("TERJUAL")) {
+                JOptionPane.showMessageDialog(this, "Listing TERJUAL tidak bisa dihapus!");
+                return;
+            }
+
+            listingImpl.delete(selectedListingId);
+            JOptionPane.showMessageDialog(this, "Listing berhasil dihapus!");
+
+            // reload tabel
+            loadListing();
+            selectedListingId = null; // reset selection
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal menghapus listing: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnHapusActionPerformed
 
     /**
      * @param args the command line arguments
@@ -761,7 +1112,7 @@ public class ListingView extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new ListingView().setVisible(true));
+//        java.awt.EventQueue.invokeLater(() -> new ListingView().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -773,24 +1124,18 @@ public class ListingView extends javax.swing.JFrame {
     private javax.swing.JToggleButton btnTerjual;
     private javax.swing.JToggleButton btnTersedia;
     private javax.swing.JButton btnVerifikasi;
+    private javax.swing.JLabel detGame;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -799,12 +1144,21 @@ public class ListingView extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lbHarga;
+    private javax.swing.JLabel lbId;
+    private javax.swing.JLabel lbKondisi;
+    private javax.swing.JLabel lbStatus;
+    private javax.swing.JLabel lbTanggal;
+    private javax.swing.JLabel lbTotalListing;
+    private javax.swing.JLabel lbUser;
     private javax.swing.JPanel panelActionContainer;
     private javax.swing.JPanel panelEdit;
     private javax.swing.JPanel panelHapus;
     private javax.swing.JPanel panelVerifikasi;
     private javax.swing.JTable tbListing;
     private javax.swing.JTextField tfCari;
+    private javax.swing.JTextArea tfDeskripsi;
     // End of variables declaration//GEN-END:variables
 }
