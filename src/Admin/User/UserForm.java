@@ -4,17 +4,33 @@
  */
 package Admin.User;
 
+import implement.UserImpl;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Bintang K
  */
 public class UserForm extends javax.swing.JFrame {
+    UserImpl userImpl = new UserImpl();
 
     /**
      * Creates new form UserForm
      */
-    public UserForm() {
+    public UserForm(String idUser) throws SQLException {
         initComponents();
+        loadData(idUser);
+    }
+    private void loadData(String idUser) throws SQLException {
+        entity.user usr = userImpl.getById(idUser);
+        if (usr != null) {
+            tfIdUser.setText(usr.getIdUser());
+            tfUsername.setText(usr.getUsername());
+            tfFullname.setText(usr.getFullname());
+            tfEmail.setText(usr.getEmail());
+            tfRole.setSelectedItem(usr.getRole());
+        }
     }
 
     /**
@@ -82,7 +98,7 @@ public class UserForm extends javax.swing.JFrame {
 
         tfRole.setBackground(new java.awt.Color(41, 41, 52));
         tfRole.setForeground(new java.awt.Color(228, 225, 239));
-        tfRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "buyer", "seller" }));
+        tfRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "buyer", "seller", "admin" }));
         tfRole.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
 
         tfUsername.setBackground(new java.awt.Color(41, 41, 52));
@@ -120,14 +136,24 @@ public class UserForm extends javax.swing.JFrame {
         btnEdit.setBackground(new java.awt.Color(167, 139, 250));
         btnEdit.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnEdit.setForeground(new java.awt.Color(60, 25, 137));
-        btnEdit.setText("Edit");
+        btnEdit.setText("Simpan Edit");
         btnEdit.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(60, 25, 137)));
+        btnEdit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnEditMouseClicked(evt);
+            }
+        });
 
         btnBatalkan.setBackground(new java.awt.Color(147, 0, 10));
         btnBatalkan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnBatalkan.setForeground(new java.awt.Color(255, 218, 214));
         btnBatalkan.setText("Batalkan");
         btnBatalkan.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 218, 214)));
+        btnBatalkan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnBatalkanMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -137,15 +163,15 @@ public class UserForm extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnBatalkan, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEdit)
                     .addComponent(btnBatalkan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -236,40 +262,51 @@ public class UserForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnEditMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEditMouseClicked
+        // TODO add your handling code here:
+        String username = tfUsername.getText().trim();
+        String fullname = tfFullname.getText().trim();
+        String email = tfEmail.getText().trim();
+        String role = tfRole.getSelectedItem().toString();
+
+        if (username.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Username tidak boleh kosong.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (fullname.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Fullname tidak boleh kosong.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (email.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Email tidak boleh kosong.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            entity.user usr = new entity.user();
+            usr.setIdUser(tfIdUser.getText());
+            usr.setUsername(username);
+            usr.setFullname(fullname);
+            usr.setEmail(email);
+            usr.setRole(role);
+            userImpl.update(usr);
+            JOptionPane.showMessageDialog(this, "Data berhasil diperbarui.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
+            new UserView().setVisible(true);
+            this.dispose();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Gagal memperbarui data.\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnEditMouseClicked
+
+    private void btnBatalkanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBatalkanMouseClicked
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_btnBatalkanMouseClicked
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(UserForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(UserForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(UserForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(UserForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new UserForm().setVisible(true);
-            }
-        });
-    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatalkan;
