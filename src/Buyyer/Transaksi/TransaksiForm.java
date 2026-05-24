@@ -4,6 +4,10 @@
  */
 package Buyyer.Transaksi;
 
+import Admin.Transaksi.TransaksiView;
+import entity.user;
+import entity.transaksi;
+import interfc.TransaksiInterfc;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -16,6 +20,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
@@ -28,15 +33,74 @@ public class TransaksiForm extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TransaksiForm.class.getName());
 
+    private user currentUser;
+    private TransaksiInterfc transaksiRepo = new implement.TransaksiImpl();
+    private TransaksiView transaksiView;
     /**
      * Creates new form TransaksiForm
      */
-    public TransaksiForm() {
+    public TransaksiForm(user currentUser, TransaksiView parentView) {
         initComponents();
+        this.currentUser = currentUser;
+        this.transaksiView = parentView;
+        this.setLocationRelativeTo(null);
         
         styleComboBox(cbListing);
         styleComboBox(cbMetode);
-        styleComboBox(cbStatus);
+        
+        initFormLogic();
+    }
+    
+    private void initFormLogic() {
+        dcTanggal.setDate(new java.util.Date());
+
+        tfId.setEditable(false);
+        tfTotal.setEditable(false);
+        tfTotal.setBackground(new Color(45, 45, 55));
+        tfTotal.setForeground(new Color(202, 196, 212));
+
+        try {
+            String newId = transaksiRepo.generateNewTransactionId();
+            tfId.setText(newId);
+        } catch (java.sql.SQLException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Gagal generate ID transaksi", e);
+            tfId.setText("T000");
+        }
+        
+        tfTotal.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                char c = evt.getKeyChar();
+                if (!Character.isDigit(c)) {
+                    evt.consume();
+                }
+            }
+        });
+        
+        // 4. Ambil data asli untuk dimasukkan ke ComboBox
+        loadListingData();
+        loadMetodeBayar();
+    }
+    
+    private void loadListingData() {
+        cbListing.removeAllItems();
+        cbListing.addItem("Pilih listing");
+        
+        // Mengambil list data dari database via Impl
+        java.util.List<String[]> data = transaksiRepo.getAvailableListing();
+        for (String[] listing : data) {
+            String id = listing[0];
+            String nama = listing[1];
+            cbListing.addItem(id + " - " + nama);
+        }
+    }
+
+    private void loadMetodeBayar() {
+        cbMetode.removeAllItems();
+        cbMetode.addItem("Pilih Metode");
+        cbMetode.addItem("Transfer Bank");
+        cbMetode.addItem("COD");
+        cbMetode.addItem("E-Wallet");
     }
     
     private void styleComboBox(JComboBox comboBox) {
@@ -151,9 +215,6 @@ public class TransaksiForm extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        btPasang = new javax.swing.JButton();
-        btBatal = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         tfId = new javax.swing.JTextField();
@@ -167,10 +228,10 @@ public class TransaksiForm extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         cbMetode = new javax.swing.JComboBox<>();
         tfTotal = new javax.swing.JTextField();
-        jPanel7 = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
-        cbStatus = new javax.swing.JComboBox<>();
         jPanel8 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        btCatat = new javax.swing.JButton();
+        btBatal = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
@@ -204,48 +265,11 @@ public class TransaksiForm extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
+                .addContainerGap(27, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addGap(21, 21, 21))
-        );
-
-        jPanel3.setBackground(new java.awt.Color(27, 27, 37));
-
-        btPasang.setBackground(new java.awt.Color(167, 139, 250));
-        btPasang.setFont(new java.awt.Font("Verdana", 1, 13)); // NOI18N
-        btPasang.setForeground(new java.awt.Color(60, 25, 137));
-        btPasang.setText("Pasang Listing");
-        btPasang.setBorder(null);
-        btPasang.addActionListener(this::btPasangActionPerformed);
-
-        btBatal.setBackground(new java.awt.Color(147, 0, 10));
-        btBatal.setFont(new java.awt.Font("Verdana", 1, 13)); // NOI18N
-        btBatal.setForeground(new java.awt.Color(255, 218, 214));
-        btBatal.setText("Batal");
-        btBatal.setBorder(null);
-        btBatal.addActionListener(this::btBatalActionPerformed);
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btPasang, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btPasang, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         jPanel4.setBackground(new java.awt.Color(18, 18, 28));
@@ -391,41 +415,58 @@ public class TransaksiForm extends javax.swing.JFrame {
                     .addContainerGap(45, Short.MAX_VALUE)))
         );
 
-        jPanel7.setBackground(new java.awt.Color(18, 18, 28));
-
-        jLabel7.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(202, 196, 212));
-        jLabel7.setText("Status Transaksi");
-
-        cbStatus.setBackground(new java.awt.Color(32, 32, 41));
-        cbStatus.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        cbStatus.setForeground(new java.awt.Color(202, 196, 212));
-        cbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pending", "Proses", "Selesai", "Dibatalkan" }));
-        cbStatus.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(111, 108, 120)));
-        cbStatus.addActionListener(this::cbStatusActionPerformed);
-
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7)
-                    .addComponent(cbStatus, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(37, 37, 37))
-        );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(7, Short.MAX_VALUE))
-        );
-
         jPanel8.setBackground(new java.awt.Color(18, 18, 28));
+
+        jPanel3.setBackground(new java.awt.Color(27, 27, 37));
+
+        btCatat.setBackground(new java.awt.Color(167, 139, 250));
+        btCatat.setFont(new java.awt.Font("Verdana", 1, 13)); // NOI18N
+        btCatat.setForeground(new java.awt.Color(60, 25, 137));
+        btCatat.setText("Catat Transaksi");
+        btCatat.setBorder(null);
+        btCatat.addActionListener(this::btCatatActionPerformed);
+
+        btBatal.setBackground(new java.awt.Color(147, 0, 10));
+        btBatal.setFont(new java.awt.Font("Verdana", 1, 13)); // NOI18N
+        btBatal.setForeground(new java.awt.Color(255, 218, 214));
+        btBatal.setText("Batal");
+        btBatal.setBorder(null);
+        btBatal.addActionListener(this::btBatalActionPerformed);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btCatat, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btCatat, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(23, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(10, Short.MAX_VALUE))
+        );
 
         jLabel10.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(202, 196, 212));
@@ -441,38 +482,21 @@ public class TransaksiForm extends javax.swing.JFrame {
         jTextArea1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(111, 108, 120)));
         jScrollPane1.setViewportView(jTextArea1);
 
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE))
-                .addGap(38, 38, 38))
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                .addGap(38, 38, 38))
-        );
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(38, 38, 38)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
+                    .addComponent(jLabel10))
+                .addGap(37, 37, 37))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -484,57 +508,133 @@ public class TransaksiForm extends javax.swing.JFrame {
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+                .addGap(32, 32, 32)
+                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 535, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 694, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
+        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btPasangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btPasangActionPerformed
+    private void cbListingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbListingActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btPasangActionPerformed
-
-    private void btBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btBatalActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btBatalActionPerformed
+        if (cbListing.getSelectedIndex() <= 0) {
+            tfTotal.setText("");
+            return;
+        }
+        
+        try {
+            String selectedItem = cbListing.getSelectedItem().toString();
+            String idListing = selectedItem.split(" - ")[0]; 
+            
+            // Ambil harga dari DB berdasarkan ID listing terpilih
+            long harga = transaksiRepo.getHargaById(idListing);
+            
+            if (harga > 0) {
+                tfTotal.setText(String.valueOf(harga));
+            } else {
+                tfTotal.setText("");
+            }
+        } catch (Exception e) {
+            logger.log(java.util.logging.Level.SEVERE, "Gagal mengambil harga listing", e);
+        }
+    }//GEN-LAST:event_cbListingActionPerformed
 
     private void tfIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfIdActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tfIdActionPerformed
 
-    private void cbListingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbListingActionPerformed
+    private void btBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btBatalActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_cbListingActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btBatalActionPerformed
 
-    private void cbStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbStatusActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbStatusActionPerformed
+    private void btCatatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCatatActionPerformed
+        if (cbListing.getSelectedIndex() == 0 ||
+            cbMetode.getSelectedIndex() == 0 ||
+            dcTanggal.getDate() == null) {
+
+                JOptionPane.showMessageDialog(
+                this,
+                "Lengkapi semua data terlebih dahulu!"
+            );
+            return;
+        }
+        
+        try {
+            String idTransaksi = tfId.getText();
+            
+            String selectedListing = cbListing.getSelectedItem().toString();
+            String idListing = selectedListing.split(" - ")[0];
+            String idPembeli = currentUser.getIdUser();
+
+            int totalHarga = Integer.parseInt(tfTotal.getText());
+
+            String metodeBayar = cbMetode.getSelectedItem().toString();
+
+            String status = "PENDING";
+
+            String catatan = jTextArea1.getText();
+
+            java.sql.Date tanggal = new java.sql.Date(
+                dcTanggal.getDate().getTime()
+            );
+            
+            transaksi t = new transaksi();
+
+            t.setIdTransaksi(idTransaksi);
+            t.setIdListing(idListing);
+            t.setIdPembeli(idPembeli);
+            t.setTotalHarga(totalHarga);
+            t.setMetodePembayaran(metodeBayar);
+            t.setStatus(status);
+            t.setCatatan(catatan);
+            t.setTanggalTransaksi(tanggal);
+            
+            boolean berhasil = transaksiRepo.insertTransaction(t);
+
+            if (berhasil) {
+
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Transaksi berhasil disimpan!"
+                );
+                
+                transaksiView.loadTableData("");
+
+                this.dispose();
+
+                tfId.setText(transaksiRepo.generateNewTransactionId());
+
+                cbListing.setSelectedIndex(0);
+                cbMetode.setSelectedIndex(0);
+                tfTotal.setText("");
+                jTextArea1.setText("");
+                dcTanggal.setDate(new java.util.Date());
+                
+                cbListing.requestFocus();
+
+            } else {
+
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Gagal menyimpan transaksi!"
+                );
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Error : " + e.getMessage()
+            );
+
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btCatatActionPerformed
 
     /**
      * @param args the command line arguments
@@ -558,15 +658,14 @@ public class TransaksiForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new TransaksiForm().setVisible(true));
+//        java.awt.EventQueue.invokeLater(() -> new TransaksiForm(currentUser).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btBatal;
-    private javax.swing.JButton btPasang;
+    private javax.swing.JButton btCatat;
     private javax.swing.JComboBox<String> cbListing;
     private javax.swing.JComboBox<String> cbMetode;
-    private javax.swing.JComboBox<String> cbStatus;
     private com.toedter.calendar.JDateChooser dcTanggal;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
@@ -575,7 +674,6 @@ public class TransaksiForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -584,7 +682,6 @@ public class TransaksiForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;

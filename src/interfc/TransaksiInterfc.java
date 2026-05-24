@@ -17,7 +17,11 @@ public interface TransaksiInterfc {
     boolean deleteTransaction(String transactionId) throws SQLException;
     String generateNewTransactionId() throws SQLException;
     boolean insertTransaction(transaksi t) throws SQLException;
-    
+    boolean updateTransactionStatus(String idTransaksi, String statusBaru) throws SQLException;
 
     String getSellerNameByTransactionId(String transactionId) throws SQLException;
+    
+    List<String[]> getAvailableListing();
+    long getHargaById(String idListing);
+    
 }
