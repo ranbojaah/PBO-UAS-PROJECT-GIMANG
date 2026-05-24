@@ -4,6 +4,18 @@
  */
 package Seller.Listing;
 
+import Admin.Listing.ListingView;
+import Connection.Koneksi;
+import entity.listing;
+import entity.user;
+import implement.ListingImpl;
+
+import javax.swing.*;
+import javax.swing.text.*;
+import java.awt.event.*;
+import java.sql.*;
+import java.util.*;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -27,16 +39,75 @@ import javax.swing.plaf.basic.BasicComboPopup;
 public class ListingForm extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ListingForm.class.getName());
-
+    
+    private user currentUser;
+    private ListingView parentListingView;
+    private boolean isEditMode = false;
+    private listing editListing = null;
     /**
      * Creates new form ListingForm
      */
-    public ListingForm() {
+    public ListingForm(user usr, ListingView parent, listing l) {
         initComponents();
+        this.setLocationRelativeTo(this);
+        this.currentUser = usr;
+        this.parentListingView = parent;
         
         styleComboBox(cbGame);
         styleComboBox(cbKondisi);
         styleComboBox(cbStatus);
+        
+        loadGameCombo();
+        
+        taDeskripsi.setLineWrap(true);
+        taDeskripsi.setWrapStyleWord(true);
+        
+        dcTanggal.setDate(new java.util.Date());
+        
+        if (l != null) {
+            isEditMode = true;
+            editListing = l;
+            populateFormForEdit(l); // pilih item game, set status, set id sesuai DB
+        } else {
+            // Mode tambah
+            try {
+                tfId.setText(generateNewListingId()); // hanya mode tambah
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Gagal generate ID: " + e.getMessage());
+            }
+            tfId.setEditable(false);
+            cbStatus.setModel(new DefaultComboBoxModel<>(new String[]{"PROSES"}));
+            cbStatus.setSelectedIndex(0);
+            cbStatus.setEnabled(false);
+        }
+
+        cbKondisi.setModel(new DefaultComboBoxModel<>(new String[]{"BARU", "BEKAS"}));
+        cbKondisi.setSelectedIndex(0);
+
+        btBatal.addActionListener(evt -> this.dispose());
+    }
+    
+    private void populateFormForEdit(listing l) {
+        tfId.setText(l.getListingId());
+        tfId.setEditable(false);
+
+        dcTanggal.setDate(l.getListedDate());
+        tfTotal.setText(String.valueOf(l.getPrice()));
+        cbKondisi.setSelectedItem(l.getCondition());
+
+        // Set game combo
+        for (int i = 0; i < cbGame.getItemCount(); i++) {
+            String item = cbGame.getItemAt(i);
+            if (item.startsWith(l.getGameId() + "|")) {
+                cbGame.setSelectedIndex(i);
+                break;
+            }
+        }
+
+        cbStatus.setModel(new DefaultComboBoxModel<>(new String[]{l.getStatus()}));
+        cbStatus.setEnabled(false);
+
+        taDeskripsi.setText(l.getDescription());
     }
     
     private void styleComboBox(JComboBox comboBox) {
@@ -136,6 +207,104 @@ public class ListingForm extends javax.swing.JFrame {
         comboBox.revalidate();
         comboBox.repaint();
     }
+    
+    private void loadGameCombo() {
+        DefaultComboBoxModel<String> gameModel = new DefaultComboBoxModel<>();
+        gameModel.addElement("Pilih game dari katalog"); // placeholder
+        try {
+            String sql = "SELECT game_id, title FROM games ORDER BY title ASC";
+            PreparedStatement st = Koneksi.getConnection().prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                // simpan di model: id|title
+                gameModel.addElement(rs.getString("game_id") + "|" + rs.getString("title"));
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal load game: " + e.getMessage());
+        }
+        cbGame.setModel(gameModel);
+        cbGame.setSelectedIndex(0);
+    }
+    
+    private String generateNewListingId() throws SQLException {
+        String sql = "SELECT listing_id FROM listings ORDER BY listing_id DESC LIMIT 1";
+        PreparedStatement st = Koneksi.getConnection().prepareStatement(sql);
+        ResultSet rs = st.executeQuery();
+        if (rs.next()) {
+            String lastId = rs.getString("listing_id");
+            int num = Integer.parseInt(lastId.substring(1));
+            num++;
+            return String.format("L%03d", num);
+        } else {
+            return "L001";
+        }
+    }
+    
+    private void pasangListing() {
+        try {
+            String gameSel = (String) cbGame.getSelectedItem();
+            if (gameSel.equals("Pilih game dari katalog")) {
+                JOptionPane.showMessageDialog(this, "Silakan pilih game dari katalog");
+                return;
+            }
+
+            String[] parts = gameSel.split("\\|");
+            String gameId = parts[0];
+
+            String kondisi = (String) cbKondisi.getSelectedItem();
+            String deskripsi = taDeskripsi.getText();
+            int harga;
+
+            try {
+                harga = Integer.parseInt(tfTotal.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Harga harus angka!");
+                return;
+            }
+
+            ListingImpl li = new ListingImpl();
+
+            if (isEditMode) {
+                if (editListing.getStatus().equalsIgnoreCase("TERJUAL")) {
+                    JOptionPane.showMessageDialog(this, "Listing TERJUAL tidak bisa diedit!");
+                    return;
+                }
+
+                // hanya kolom yang boleh diubah
+                editListing.setGameId(gameId);
+                editListing.setCondition(kondisi);
+                editListing.setPrice(harga);
+                editListing.setDescription(deskripsi);
+                editListing.setListedDate(new java.sql.Date(dcTanggal.getDate().getTime()));
+                // status TIDAK dirubah
+
+                li.update(editListing);
+                JOptionPane.showMessageDialog(this, "Listing berhasil diperbarui!");
+            } else {
+                // mode tambah
+                listing l = new listing();
+                l.setListingId(tfId.getText());
+                l.setGameId(gameId);
+                l.setSellerId(currentUser.getIdUser());
+                l.setPrice(harga);
+                l.setCondition(kondisi);
+                l.setStatus("PROSES"); // default status
+                l.setDescription(deskripsi);
+                l.setListedDate(new java.sql.Date(dcTanggal.getDate().getTime()));
+
+                li.insert(l);
+                JOptionPane.showMessageDialog(this, "Listing berhasil ditambahkan!");
+            }
+
+            this.dispose();
+            if (parentListingView != null) {
+                parentListingView.loadListing();
+            }
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan listing: " + e.getMessage());
+        }
+    }
         
     /**
      * This method is called from within the constructor to initialize the form.
@@ -172,7 +341,7 @@ public class ListingForm extends javax.swing.JFrame {
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        taDeskripsi = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Form Listing");
@@ -272,12 +441,12 @@ public class ListingForm extends javax.swing.JFrame {
                 .addGap(38, 38, 38)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(tfId, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE))
+                    .addComponent(tfId, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
-                    .addComponent(dcTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE))
-                .addGap(36, 36, 36))
+                    .addComponent(dcTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(41, 41, 41))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -346,10 +515,11 @@ public class ListingForm extends javax.swing.JFrame {
         cbKondisi.setBackground(new java.awt.Color(32, 32, 41));
         cbKondisi.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         cbKondisi.setForeground(new java.awt.Color(202, 196, 212));
-        cbKondisi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih Kondisi", "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbKondisi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih Kondisi", "Baru", "Bekas" }));
         cbKondisi.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(111, 108, 120)));
 
         tfTotal.setBackground(new java.awt.Color(32, 32, 41));
+        tfTotal.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         tfTotal.setForeground(new java.awt.Color(202, 196, 212));
         tfTotal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(111, 108, 120)));
 
@@ -359,14 +529,14 @@ public class ListingForm extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(38, 38, 38)
-                .addComponent(tfTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                .addComponent(tfTotal)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(cbKondisi, 0, 219, Short.MAX_VALUE)
+                        .addComponent(cbKondisi, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(37, 37, 37))))
             .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel6Layout.createSequentialGroup()
@@ -433,13 +603,13 @@ public class ListingForm extends javax.swing.JFrame {
 
         jScrollPane1.setBorder(null);
 
-        jTextArea1.setBackground(new java.awt.Color(32, 32, 41));
-        jTextArea1.setColumns(20);
-        jTextArea1.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        jTextArea1.setForeground(new java.awt.Color(202, 196, 212));
-        jTextArea1.setRows(5);
-        jTextArea1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(111, 108, 120)));
-        jScrollPane1.setViewportView(jTextArea1);
+        taDeskripsi.setBackground(new java.awt.Color(32, 32, 41));
+        taDeskripsi.setColumns(20);
+        taDeskripsi.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        taDeskripsi.setForeground(new java.awt.Color(202, 196, 212));
+        taDeskripsi.setRows(5);
+        taDeskripsi.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(111, 108, 120)));
+        jScrollPane1.setViewportView(taDeskripsi);
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -458,7 +628,7 @@ public class ListingForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
                 .addGap(38, 38, 38))
         );
 
@@ -468,7 +638,7 @@ public class ListingForm extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -511,6 +681,7 @@ public class ListingForm extends javax.swing.JFrame {
 
     private void btPasangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btPasangActionPerformed
         // TODO add your handling code here:
+        pasangListing();
     }//GEN-LAST:event_btPasangActionPerformed
 
     private void btBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btBatalActionPerformed
@@ -539,7 +710,7 @@ public class ListingForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new ListingForm().setVisible(true));
+//        java.awt.EventQueue.invokeLater(() -> new ListingForm().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -567,7 +738,7 @@ public class ListingForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea taDeskripsi;
     private javax.swing.JTextField tfId;
     private javax.swing.JTextField tfTotal;
     // End of variables declaration//GEN-END:variables

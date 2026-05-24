@@ -4,13 +4,19 @@
  */
 package Admin.Transaksi;
 
+import entity.user;
+import implement.TransaksiImpl;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.sql.SQLException;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 /**
@@ -21,13 +27,94 @@ public class TransaksiView extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TransaksiView.class.getName());
 
+    private user currentUser;
+    private final TransaksiImpl transImpl = new TransaksiImpl();
+    
     /**
      * Creates new form TransaksiView
      */
-    public TransaksiView() {
+    public TransaksiView(user usr) {
+        this.currentUser = usr;
         initComponents();
+        this.setLocationRelativeTo(null);
         
         styleTable();
+        aturHakAkses();
+        loadTableData(""); 
+        initTableEvent();
+    }
+    
+    private void aturHakAkses() {
+        if (currentUser != null) {
+            String role = currentUser.getrole();
+            if (role.equalsIgnoreCase("buyer")) {
+                btTambah.setVisible(true);
+            } else {
+                btTambah.setVisible(false);
+            }
+        }
+    }
+    
+    public void loadTableData(String keyword) {
+        DefaultTableModel model = (DefaultTableModel) tbTransaksi.getModel();
+        model.setRowCount(0); // Kosongkan tabel terlebih dahulu
+        
+        try {
+            List<String[]> data = transImpl.getTransactionList(currentUser.getrole(), currentUser.getIdUser());
+            int jumlahTransaksi = 0;
+            
+            for (String[] row : data) {
+                if (keyword.isEmpty() || 
+                    row[0].toLowerCase().contains(keyword.toLowerCase()) || 
+                    row[1].toLowerCase().contains(keyword.toLowerCase()) || 
+                    row[2].toLowerCase().contains(keyword.toLowerCase())) {
+                    
+                    model.addRow(row);
+                    jumlahTransaksi++;
+                }
+            }
+            jLabel2.setText(jumlahTransaksi + " Transaksi Tercatat");
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal memuat data transaksi: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void initTableEvent() {
+        tbTransaksi.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = tbTransaksi.getSelectedRow();
+                if (selectedRow != -1) {
+                    // Mengambil data dari kolom tabel JTable
+                    String idTransaksi = tbTransaksi.getValueAt(selectedRow, 0).toString();
+                    String gameTitle   = tbTransaksi.getValueAt(selectedRow, 1).toString();
+                    String buyerName   = tbTransaksi.getValueAt(selectedRow, 2).toString();
+                    String totalHarga  = tbTransaksi.getValueAt(selectedRow, 3).toString();
+
+                    // Set text ke komponen detail
+                    jLabel4.setText("Detail - " + idTransaksi);
+                    jLabel6.setText(gameTitle);
+                    jLabel11.setText(buyerName);
+
+                    // PANGGIL METHOD DARI INTERFACE SECARA DINAMIS
+                    try {
+                        String namaSeller = transImpl.getSellerNameByTransactionId(idTransaksi);
+                        jLabel8.setText(namaSeller); // Set nama seller asli ke JLabel8
+                    } catch (java.sql.SQLException ex) {
+                        jLabel8.setText("Gagal memuat");
+                        ex.printStackTrace(); 
+                    }
+
+                    // Format Tampilan Rupiah
+                    try {
+                        int harga = Integer.parseInt(totalHarga);
+                        jLabel14.setText(String.format("Rp %,d", harga).replace(',', '.'));
+                    } catch (NumberFormatException ex) {
+                        jLabel14.setText("Rp " + totalHarga);
+                    }
+                }
+            }
+        });
     }
     
     private void styleTable(){
@@ -180,7 +267,7 @@ public class TransaksiView extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(148, 163, 184));
-        jLabel2.setText("0 Listing Transasksi");
+        jLabel2.setText("0 transaksi tercatat");
 
         tfCari.setBackground(new java.awt.Color(30, 30, 48));
         tfCari.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
@@ -194,6 +281,7 @@ public class TransaksiView extends javax.swing.JFrame {
         btTambah.setForeground(new java.awt.Color(17, 17, 29));
         btTambah.setText("Catat Transaksi");
         btTambah.setBorder(null);
+        btTambah.addActionListener(this::btTambahActionPerformed);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -276,7 +364,7 @@ public class TransaksiView extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(228, 225, 239));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel6.setText("FIFA 28");
+        jLabel6.setText("-");
 
         jLabel7.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(148, 163, 184));
@@ -287,7 +375,7 @@ public class TransaksiView extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(228, 225, 239));
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel8.setText("Usaman Bin Ladesh");
+        jLabel8.setText("-");
 
         jLabel9.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(148, 163, 184));
@@ -303,7 +391,7 @@ public class TransaksiView extends javax.swing.JFrame {
         jLabel11.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel11.setForeground(new java.awt.Color(228, 225, 239));
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel11.setText("Ahmad Jauhari");
+        jLabel11.setText("-");
 
         jLabel12.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(148, 163, 184));
@@ -320,7 +408,7 @@ public class TransaksiView extends javax.swing.JFrame {
         jLabel14.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel14.setForeground(new java.awt.Color(206, 189, 255));
         jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel14.setText("Rp 450.000");
+        jLabel14.setText("Rp0");
 
         jLabel17.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel17.setForeground(new java.awt.Color(148, 163, 184));
@@ -344,11 +432,10 @@ public class TransaksiView extends javax.swing.JFrame {
                             .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                            .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(36, 36, 36)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -405,7 +492,7 @@ public class TransaksiView extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(212, Short.MAX_VALUE))
+                .addContainerGap(214, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -452,7 +539,12 @@ public class TransaksiView extends javax.swing.JFrame {
 
     private void tfCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfCariActionPerformed
         // TODO add your handling code here:
+        loadTableData(tfCari.getText().trim());
     }//GEN-LAST:event_tfCariActionPerformed
+
+    private void btTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btTambahActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btTambahActionPerformed
 
     /**
      * @param args the command line arguments
@@ -476,7 +568,7 @@ public class TransaksiView extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new TransaksiView().setVisible(true));
+//        java.awt.EventQueue.invokeLater(() -> new TransaksiView().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
