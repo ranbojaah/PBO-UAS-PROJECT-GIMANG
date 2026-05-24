@@ -57,7 +57,7 @@ public class user {
     public void setPassword(String password) {
         this.password = password;
     }
-    public String getrole(){
+    public String getRole(){
         return role;
     }
     public void setRole(String role) {

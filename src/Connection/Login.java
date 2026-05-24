@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import util.Session;
 
 /**
  *
@@ -45,6 +46,7 @@ public class Login extends javax.swing.JFrame {
         btnLogin = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Login");
 
         jPanel1.setBackground(new java.awt.Color(18, 18, 28));
         jPanel1.setForeground(new java.awt.Color(202, 196, 212));
@@ -61,6 +63,14 @@ public class Login extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(202, 196, 212));
         jLabel3.setText("Selamat Datang");
 
+        tfUsername.setBackground(new java.awt.Color(41, 41, 52));
+        tfUsername.setForeground(new java.awt.Color(228, 225, 239));
+        tfUsername.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
+
+        tfPw.setBackground(new java.awt.Color(41, 41, 52));
+        tfPw.setForeground(new java.awt.Color(228, 225, 239));
+        tfPw.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
+
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(202, 196, 212));
         jLabel4.setText("Belum punya akun? daftar");
@@ -69,6 +79,7 @@ public class Login extends javax.swing.JFrame {
         btnDisini.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
         btnDisini.setForeground(new java.awt.Color(202, 196, 212));
         btnDisini.setText("di sini");
+        btnDisini.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(73, 69, 82)));
         btnDisini.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnDisiniMouseClicked(evt);
@@ -78,6 +89,7 @@ public class Login extends javax.swing.JFrame {
         btnLogin.setBackground(new java.awt.Color(41, 41, 52));
         btnLogin.setForeground(new java.awt.Color(202, 196, 212));
         btnLogin.setText("Login");
+        btnLogin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(73, 69, 82)));
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLoginActionPerformed(evt);
@@ -132,7 +144,7 @@ public class Login extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(btnDisini))
-                .addContainerGap(53, Short.MAX_VALUE))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -167,7 +179,8 @@ public class Login extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Username atau password salah", "Login Gagal", JOptionPane.ERROR_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "Login berhasil! Selamat datang, " + usr.getFullname(), "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                 new DashboardView(usr).setVisible(true);
+                Session.setUser(usr);
+                new DashboardView().setVisible(true);
                  this.dispose();
             }
         } catch (SQLException ex) {

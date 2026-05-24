@@ -5,24 +5,21 @@
 package Dashboard;
 
 import Admin.User.UserView;
-import entity.user;
 import javax.swing.JOptionPane;
+import util.Session;
 
 /**
  *
  * @author Bintang K
  */
 public class DashboardView extends javax.swing.JFrame {
-    private final entity.user currentUser;
 
     /**
      * Creates new form DashboardView
-     * @param usr
      */
-    public DashboardView(user usr) {
-        this.currentUser = usr;
+    public DashboardView() {
         initComponents();
-        if (currentUser.getrole().equals("admin")) {
+        if (Session.getRole().equals("admin")) {
             btnUserView.setVisible(true);
         } else {
             btnUserView.setVisible(false);
@@ -119,7 +116,7 @@ public class DashboardView extends javax.swing.JFrame {
 
     private void btnUserViewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnUserViewMouseClicked
         // TODO add your handling code here:
-        if(currentUser.getrole().equals("admin")) {
+        if(Session.getRole().equals("admin")) {
             new UserView().setVisible(true);
             this.dispose();
         } else {
