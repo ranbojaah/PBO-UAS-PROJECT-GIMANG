@@ -47,11 +47,24 @@ public class TransaksiView extends javax.swing.JFrame {
     private void aturHakAkses() {
         if (currentUser != null) {
             String role = currentUser.getrole();
+
+            // JIKA YANG LOGIN ADALAH BUYER
             if (role.equalsIgnoreCase("buyer")) {
                 btTambah.setVisible(true);
+                btHapus.setVisible(false);
+
+            // JIKA YANG LOGIN ADALAH ADMIN
+            } else if (role.equalsIgnoreCase("admin")) {
+                btTambah.setVisible(false);
+                btHapus.setVisible(true);   
+
             } else {
                 btTambah.setVisible(false);
+                btHapus.setVisible(false);  
             }
+        } else {
+            btTambah.setVisible(false);
+            btHapus.setVisible(false);
         }
     }
     
@@ -254,6 +267,7 @@ public class TransaksiView extends javax.swing.JFrame {
         jLabel14 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
+        btHapus = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -293,10 +307,13 @@ public class TransaksiView extends javax.swing.JFrame {
                 .addGap(38, 38, 38)
                 .addComponent(jLabel2)
                 .addGap(88, 88, 88)
-                .addComponent(tfCari)
-                .addGap(70, 70, 70)
-                .addComponent(btTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25))
+                .addComponent(tfCari, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
+                .addGap(229, 229, 229))
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                    .addContainerGap(834, Short.MAX_VALUE)
+                    .addComponent(btTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(15, 15, 15)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -305,9 +322,13 @@ public class TransaksiView extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
-                    .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(17, 17, 17))
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                    .addContainerGap(30, Short.MAX_VALUE)
+                    .addComponent(btTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(7, 7, 7)))
         );
 
         jPanel3.setBackground(new java.awt.Color(18, 18, 28));
@@ -485,6 +506,13 @@ public class TransaksiView extends javax.swing.JFrame {
                 .addGap(0, 86, Short.MAX_VALUE))
         );
 
+        btHapus.setBackground(new java.awt.Color(248, 113, 113));
+        btHapus.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        btHapus.setForeground(new java.awt.Color(17, 17, 29));
+        btHapus.setText("Hapus Transaksi");
+        btHapus.setBorder(null);
+        btHapus.addActionListener(this::btHapusActionPerformed);
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -492,13 +520,19 @@ public class TransaksiView extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(214, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(btHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -542,6 +576,58 @@ public class TransaksiView extends javax.swing.JFrame {
         loadTableData(tfCari.getText().trim());
     }//GEN-LAST:event_tfCariActionPerformed
 
+    private void btHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btHapusActionPerformed
+        // TODO add your handling code here:
+        if (currentUser == null || !currentUser.getrole().equalsIgnoreCase("admin")) {
+            JOptionPane.showMessageDialog(this, 
+                    "Akses ditolak! Hanya Admin yang dapat menghapus transaksi.", 
+                    "Error Hak Akses", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        int selectedRow = tbTransaksi.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, 
+                    "Silakan pilih baris transaksi yang ingin dihapus pada tabel!", 
+                    "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        String idTransaksi = tbTransaksi.getValueAt(selectedRow, 0).toString();
+        
+        int konfirmasi = JOptionPane.showConfirmDialog(this, 
+            "Apakah Anda yakin ingin menghapus transaksi dengan ID: " + idTransaksi + "?", 
+            "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (konfirmasi == JOptionPane.YES_OPTION) {
+            try {
+                boolean sukses = transImpl.deleteTransaction(idTransaksi);
+
+                if (sukses) {
+                    JOptionPane.showMessageDialog(this, 
+                            "Transaksi " + idTransaksi + " berhasil dihapus!", 
+                            "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+                    loadTableData(""); 
+
+                    jLabel4.setText("Detail - ID-Transaksi");
+                    jLabel6.setText("-");
+                    jLabel8.setText("-");
+                    jLabel11.setText("-");
+                    jLabel14.setText("Rp0");
+                } else {
+                    JOptionPane.showMessageDialog(this, 
+                            "Gagal menghapus transaksi. Data mungkin sudah tidak ada.", 
+                            "Gagal", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, 
+                        "Terjadi kesalahan database: " + ex.getMessage(), 
+                        "Database Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_btHapusActionPerformed
+
     private void btTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btTambahActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btTambahActionPerformed
@@ -572,6 +658,7 @@ public class TransaksiView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btHapus;
     private javax.swing.JButton btTambah;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

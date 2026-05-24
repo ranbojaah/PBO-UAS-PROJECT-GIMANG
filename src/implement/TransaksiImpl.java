@@ -71,10 +71,19 @@ public class TransaksiImpl implements TransaksiInterfc {
     @Override
     public boolean deleteTransaction(String transactionId) throws SQLException {
         String sql = "DELETE FROM transactions WHERE transaction_id = ?";
+
         try (Connection conn = Koneksi.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, transactionId);
-            return ps.executeUpdate() > 0;
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException ex) {
+            System.out.println("=== ERROR SAAT DELETE TRANSAKSI ===");
+            ex.printStackTrace();
+            throw ex;
         }
     }
     
