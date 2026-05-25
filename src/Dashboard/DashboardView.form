@@ -100,6 +100,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Listings"/>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnListingsViewMouseClicked"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnReviewsView">
           <Properties>

@@ -5,6 +5,8 @@
 package Dashboard;
 
 import Admin.User.UserView;
+import Admin.Listing.ListingView;
+import entity.user;
 import javax.swing.JOptionPane;
 import util.Session;
 
@@ -52,6 +54,11 @@ public class DashboardView extends javax.swing.JFrame {
         btnGenresView.setText("Genres");
 
         btnListingsView.setText("Listings");
+        btnListingsView.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnListingsViewMouseClicked(evt);
+            }
+        });
 
         btnReviewsView.setText("Reviews");
 
@@ -123,6 +130,12 @@ public class DashboardView extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Anda bukan admin", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnUserViewMouseClicked
+
+    private void btnListingsViewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnListingsViewMouseClicked
+        // TODO add your handling code here:
+        new ListingView(currentUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnListingsViewMouseClicked
 
     /**
      * @param args the command line arguments
