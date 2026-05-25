@@ -108,11 +108,17 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Reviews"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnReviewsViewActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnTransactView">
           <Properties>
             <Property name="text" type="java.lang.String" value="Transactions"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTransactViewActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnUserView">
           <Properties>

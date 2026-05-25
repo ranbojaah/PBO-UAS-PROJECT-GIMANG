@@ -6,6 +6,7 @@ package Dashboard;
 
 import Admin.User.UserView;
 import Admin.Listing.ListingView;
+import Admin.Transaksi.TransaksiView;
 import entity.user;
 import javax.swing.JOptionPane;
 import util.Session;
@@ -61,8 +62,18 @@ public class DashboardView extends javax.swing.JFrame {
         });
 
         btnReviewsView.setText("Reviews");
+        btnReviewsView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReviewsViewActionPerformed(evt);
+            }
+        });
 
         btnTransactView.setText("Transactions");
+        btnTransactView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTransactViewActionPerformed(evt);
+            }
+        });
 
         btnUserView.setText("Users");
         btnUserView.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -136,6 +147,16 @@ public class DashboardView extends javax.swing.JFrame {
         new ListingView(currentUser).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnListingsViewMouseClicked
+
+    private void btnReviewsViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReviewsViewActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnReviewsViewActionPerformed
+
+    private void btnTransactViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransactViewActionPerformed
+        // TODO add your handling code here:
+        new TransaksiView(currentUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnTransactViewActionPerformed
 
     /**
      * @param args the command line arguments
