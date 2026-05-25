@@ -46,6 +46,7 @@ public class Register extends javax.swing.JFrame {
         tfRole = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Register");
 
         jPanel1.setBackground(new java.awt.Color(18, 18, 28));
         jPanel1.setForeground(new java.awt.Color(202, 196, 212));
@@ -62,9 +63,18 @@ public class Register extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(202, 196, 212));
         jLabel3.setText("Selamat Datang");
 
+        tfUsername.setBackground(new java.awt.Color(41, 41, 52));
+        tfUsername.setForeground(new java.awt.Color(228, 225, 239));
+        tfUsername.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
+
+        tfPw.setBackground(new java.awt.Color(41, 41, 52));
+        tfPw.setForeground(new java.awt.Color(228, 225, 239));
+        tfPw.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
+
         btnRegister.setBackground(new java.awt.Color(41, 41, 52));
         btnRegister.setForeground(new java.awt.Color(202, 196, 212));
         btnRegister.setText("Register");
+        btnRegister.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
         btnRegister.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRegisterActionPerformed(evt);
@@ -75,15 +85,26 @@ public class Register extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(202, 196, 212));
         jLabel4.setText("Fullname");
 
+        tfFullname.setBackground(new java.awt.Color(41, 41, 52));
+        tfFullname.setForeground(new java.awt.Color(228, 225, 239));
+        tfFullname.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
+
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(202, 196, 212));
         jLabel5.setText("Email");
+
+        tfEmail.setBackground(new java.awt.Color(41, 41, 52));
+        tfEmail.setForeground(new java.awt.Color(228, 225, 239));
+        tfEmail.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(202, 196, 212));
         jLabel6.setText("Role");
 
+        tfRole.setBackground(new java.awt.Color(41, 41, 52));
+        tfRole.setForeground(new java.awt.Color(228, 225, 239));
         tfRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "buyer", "seller" }));
+        tfRole.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -108,12 +129,13 @@ public class Register extends javax.swing.JFrame {
                             .addComponent(btnRegister, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(tfPw)
                             .addComponent(tfUsername)
+                            .addComponent(tfRole, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel5)
-                            .addComponent(tfRole, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel5))
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(72, 72, 72))))
         );
         jPanel1Layout.setVerticalGroup(
