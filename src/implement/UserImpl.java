@@ -35,7 +35,7 @@ public class UserImpl implements UserInterfc{
         st.setString(3, o.getFullname());
         st.setString(4, o.getEmail());
         st.setString(5, o.getpassword());
-        st.setString(6, o.getrole());
+        st.setString(6, o.getRole());
         st.executeUpdate();
         return o;
     }
@@ -46,7 +46,7 @@ public class UserImpl implements UserInterfc{
         st.setString(1, o.getUsername());
         st.setString(2, o.getFullname());
         st.setString(3, o.getEmail());
-        st.setString(4, o.getrole());
+        st.setString(4, o.getRole());
         st.setString(5, o.getIdUser());
         st.executeUpdate();
     }
@@ -59,9 +59,16 @@ public class UserImpl implements UserInterfc{
     }
 
     @Override
-    public List<user> getAll() throws SQLException {
-        Statement st = Koneksi.getConnection().createStatement();
-        ResultSet rs = st.executeQuery("select * from users");
+    public List<user> getAll(String keyword) throws SQLException {
+        String query = "select * from users where user_id like ? or username like ? or full_name like ? or email like ? or role like ?";
+        PreparedStatement st = Koneksi.getConnection().prepareStatement(query);
+        String k = "%" + keyword + "%";
+        st.setString(1, k);
+        st.setString(2, k);
+        st.setString(3, k);
+        st.setString(4, k);
+        st.setString(5, k);
+        ResultSet rs = st.executeQuery();
         List<user>list= new ArrayList<>();
         while(rs.next()) {
             user usr = new user();
