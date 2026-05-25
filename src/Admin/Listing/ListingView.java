@@ -4,6 +4,7 @@
  */
 package Admin.Listing;
 
+import Dashboard.DashboardView;
 import Seller.Listing.ListingForm;
 import entity.user;
 import entity.listing;
@@ -380,6 +381,7 @@ public class ListingView extends javax.swing.JFrame {
         lbTotalListing = new javax.swing.JLabel();
         tfCari = new javax.swing.JTextField();
         btTambah = new javax.swing.JButton();
+        btDashboard = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         btnSemua = new javax.swing.JToggleButton();
@@ -439,19 +441,20 @@ public class ListingView extends javax.swing.JFrame {
         tfCari.setForeground(new java.awt.Color(148, 163, 184));
         tfCari.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(111, 108, 120)));
         tfCari.setMargin(new java.awt.Insets(2, 10, 2, 6));
-        tfCari.addActionListener(this::tfCariActionPerformed);
-        tfCari.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                tfCariKeyReleased(evt);
-            }
-        });
+        tfCari.addKeyListener();
 
         btTambah.setBackground(new java.awt.Color(167, 139, 250));
         btTambah.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         btTambah.setForeground(new java.awt.Color(17, 17, 29));
         btTambah.setText("Tambah Listing");
         btTambah.setBorder(null);
-        btTambah.addActionListener(this::btTambahActionPerformed);
+        btTambah.addActionListener();
+
+        btDashboard.setBackground(new java.awt.Color(167, 139, 250));
+        btDashboard.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        btDashboard.setText("Dashboard");
+        btDashboard.setBorder(null);
+        btDashboard.addActionListener();
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -462,9 +465,11 @@ public class ListingView extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(38, 38, 38)
                 .addComponent(lbTotalListing)
-                .addGap(88, 88, 88)
+                .addGap(18, 18, 18)
                 .addComponent(tfCari)
-                .addGap(70, 70, 70)
+                .addGap(17, 17, 17)
+                .addComponent(btDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(btTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(25, 25, 25))
         );
@@ -476,7 +481,8 @@ public class ListingView extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(lbTotalListing)
                     .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(8, 8, 8))
         );
 
@@ -491,7 +497,7 @@ public class ListingView extends javax.swing.JFrame {
         btnSemua.setText("Semua Listing");
         btnSemua.setBorder(null);
         btnSemua.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        btnSemua.addActionListener(this::btnSemuaActionPerformed);
+        btnSemua.addActionListener();
         jPanel5.add(btnSemua);
 
         btnTersedia.setBackground(new java.awt.Color(18, 18, 28));
@@ -499,7 +505,7 @@ public class ListingView extends javax.swing.JFrame {
         btnTersedia.setForeground(new java.awt.Color(148, 163, 184));
         btnTersedia.setText("Tersedia");
         btnTersedia.setBorder(null);
-        btnTersedia.addActionListener(this::btnTersediaActionPerformed);
+        btnTersedia.addActionListener();
         jPanel5.add(btnTersedia);
 
         btnTerjual.setBackground(new java.awt.Color(18, 18, 28));
@@ -507,7 +513,7 @@ public class ListingView extends javax.swing.JFrame {
         btnTerjual.setForeground(new java.awt.Color(148, 163, 184));
         btnTerjual.setText("Terjual");
         btnTerjual.setBorder(null);
-        btnTerjual.addActionListener(this::btnTerjualActionPerformed);
+        btnTerjual.addActionListener();
         jPanel5.add(btnTerjual);
 
         btnProses.setBackground(new java.awt.Color(18, 18, 28));
@@ -515,7 +521,7 @@ public class ListingView extends javax.swing.JFrame {
         btnProses.setForeground(new java.awt.Color(148, 163, 184));
         btnProses.setText("Proses");
         btnProses.setBorder(null);
-        btnProses.addActionListener(this::btnProsesActionPerformed);
+        btnProses.addActionListener();
         jPanel5.add(btnProses);
 
         jScrollPane2.setBackground(new java.awt.Color(18, 18, 28));
@@ -539,11 +545,7 @@ public class ListingView extends javax.swing.JFrame {
                 "ID", "GAME", "SELLER", "HARGA", "KONDISI", "STATUS"
             }
         ));
-        tbListing.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tbListingMouseClicked(evt);
-            }
-        });
+        tbListing.addMouseListener();
         jScrollPane2.setViewportView(tbListing);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -581,7 +583,7 @@ public class ListingView extends javax.swing.JFrame {
         btnEdit.setText("Edit Lisiting");
         btnEdit.setToolTipText("");
         btnEdit.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(73, 69, 82)));
-        btnEdit.addActionListener(this::btnEditActionPerformed);
+        btnEdit.addActionListener();
 
         javax.swing.GroupLayout panelEditLayout = new javax.swing.GroupLayout(panelEdit);
         panelEdit.setLayout(panelEditLayout);
@@ -606,7 +608,7 @@ public class ListingView extends javax.swing.JFrame {
         btnVerifikasi.setForeground(new java.awt.Color(17, 17, 29));
         btnVerifikasi.setText("Verifikasi");
         btnVerifikasi.setBorder(null);
-        btnVerifikasi.addActionListener(this::btnVerifikasiActionPerformed);
+        btnVerifikasi.addActionListener();
 
         javax.swing.GroupLayout panelVerifikasiLayout = new javax.swing.GroupLayout(panelVerifikasi);
         panelVerifikasi.setLayout(panelVerifikasiLayout);
@@ -628,7 +630,7 @@ public class ListingView extends javax.swing.JFrame {
         btnHapus.setForeground(new java.awt.Color(248, 113, 113));
         btnHapus.setText("Hapus Listing");
         btnHapus.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(248, 113, 113)));
-        btnHapus.addActionListener(this::btnHapusActionPerformed);
+        btnHapus.addActionListener();
 
         javax.swing.GroupLayout panelHapusLayout = new javax.swing.GroupLayout(panelHapus);
         panelHapus.setLayout(panelHapusLayout);
@@ -912,10 +914,6 @@ public class ListingView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tfCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfCariActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfCariActionPerformed
-
     private void btnTerjualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTerjualActionPerformed
         // TODO add your handling code here:
          selectedStatus = "TERJUAL";
@@ -1084,6 +1082,12 @@ public class ListingView extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnHapusActionPerformed
 
+    private void btDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDashboardActionPerformed
+        // TODO add your handling code here:
+        new DashboardView().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btDashboardActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1110,6 +1114,7 @@ public class ListingView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btDashboard;
     private javax.swing.JButton btTambah;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
