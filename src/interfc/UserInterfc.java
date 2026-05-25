@@ -17,5 +17,5 @@ public interface UserInterfc {
     user getById(String user_id) throws SQLException;
     void update (user o) throws SQLException;
     void delete (String user_id) throws SQLException;
-    List getAll() throws SQLException;
+    List getAll(String keyword) throws SQLException;
 }

@@ -9,22 +9,20 @@ import Admin.Listing.ListingView;
 import Admin.Transaksi.TransaksiView;
 import entity.user;
 import javax.swing.JOptionPane;
+import util.Session;
 
 /**
  *
  * @author Bintang K
  */
 public class DashboardView extends javax.swing.JFrame {
-    private final entity.user currentUser;
 
     /**
      * Creates new form DashboardView
-     * @param usr
      */
-    public DashboardView(user usr) {
-        this.currentUser = usr;
+    public DashboardView() {
         initComponents();
-        if (currentUser.getrole().equals("admin")) {
+        if (Session.getRole().equals("admin")) {
             btnUserView.setVisible(true);
         } else {
             btnUserView.setVisible(false);
@@ -136,7 +134,7 @@ public class DashboardView extends javax.swing.JFrame {
 
     private void btnUserViewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnUserViewMouseClicked
         // TODO add your handling code here:
-        if(currentUser.getrole().equals("admin")) {
+        if(Session.getRole().equals("admin")) {
             new UserView().setVisible(true);
             this.dispose();
         } else {
@@ -146,7 +144,7 @@ public class DashboardView extends javax.swing.JFrame {
 
     private void btnListingsViewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnListingsViewMouseClicked
         // TODO add your handling code here:
-        new ListingView(currentUser).setVisible(true);
+        new ListingView(Session.getUser()).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnListingsViewMouseClicked
 
@@ -156,7 +154,7 @@ public class DashboardView extends javax.swing.JFrame {
 
     private void btnTransactViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransactViewActionPerformed
         // TODO add your handling code here:
-        new TransaksiView(currentUser).setVisible(true);
+        new TransaksiView(Session.getUser()).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnTransactViewActionPerformed
 
