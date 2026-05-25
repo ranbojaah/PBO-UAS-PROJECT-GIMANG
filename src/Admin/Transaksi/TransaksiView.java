@@ -49,7 +49,7 @@ public class TransaksiView extends javax.swing.JFrame {
     
     private void aturHakAkses() {
         if (currentUser != null) {
-            String role = currentUser.getrole();
+            String role = currentUser.getRole();
 
             // JIKA YANG LOGIN ADALAH BUYER
             if (role.equalsIgnoreCase("buyer")) {
@@ -85,7 +85,7 @@ public class TransaksiView extends javax.swing.JFrame {
         model.setRowCount(0); // Kosongkan tabel terlebih dahulu
         
         try {
-            List<String[]> data = transImpl.getTransactionList(currentUser.getrole(), currentUser.getIdUser());
+            List<String[]> data = transImpl.getTransactionList(currentUser.getRole(), currentUser.getIdUser());
             int jumlahTransaksi = 0;
             
             for (String[] row : data) {
@@ -608,7 +608,7 @@ public class TransaksiView extends javax.swing.JFrame {
 
     private void btHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btHapusActionPerformed
         // TODO add your handling code here:
-        if (currentUser == null || !currentUser.getrole().equalsIgnoreCase("admin")) {
+        if (currentUser == null || !currentUser.getRole().equalsIgnoreCase("admin")) {
             JOptionPane.showMessageDialog(this, 
                     "Akses ditolak! Hanya Admin yang dapat menghapus transaksi.", 
                     "Error Hak Akses", JOptionPane.ERROR_MESSAGE);
