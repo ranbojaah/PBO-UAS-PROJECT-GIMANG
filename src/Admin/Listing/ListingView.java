@@ -269,7 +269,7 @@ public class ListingView extends javax.swing.JFrame {
     }
     
     private void setupRole() {
-        String role = currentUser.getrole();
+        String role = currentUser.getRole();
 
         if (role.equalsIgnoreCase("seller")) {
             btTambah.setVisible(true);
@@ -291,7 +291,7 @@ public class ListingView extends javax.swing.JFrame {
         try {
             List<listing> data;
 
-            String role = currentUser.getrole();
+            String role = currentUser.getRole();
 
             if (role.equalsIgnoreCase("admin")) {
                 data = listingImpl.getAll();
@@ -314,7 +314,7 @@ public class ListingView extends javax.swing.JFrame {
     private void applySearchAndFilter() {
         try {
             String keyword = tfCari.getText();
-            String role = currentUser.getrole();
+            String role = currentUser.getRole();
             String sellerId = currentUser.getIdUser();
 
             List<listing> data = listingImpl.search(

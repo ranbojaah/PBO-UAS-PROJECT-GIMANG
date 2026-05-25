@@ -144,7 +144,7 @@ public class DashboardView extends javax.swing.JFrame {
 
     private void btnListingsViewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnListingsViewMouseClicked
         // TODO add your handling code here:
-        new ListingView(currentUser).setVisible(true);
+        new ListingView(Session.getUser()).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnListingsViewMouseClicked
 
@@ -154,7 +154,7 @@ public class DashboardView extends javax.swing.JFrame {
 
     private void btnTransactViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransactViewActionPerformed
         // TODO add your handling code here:
-        new TransaksiView(currentUser).setVisible(true);
+        new TransaksiView(Session.getUser()).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnTransactViewActionPerformed
 
