@@ -3,18 +3,51 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package Admin.User;
+import Dashboard.DashboardView;
+import entity.user;
+import implement.UserImpl;
+import java.sql.SQLException;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Bintang K
  */
 public class UserView extends javax.swing.JFrame {
+    UserImpl userImpl = new UserImpl();
 
     /**
      * Creates new form UserView
      */
     public UserView() {
         initComponents();
+        tableUsers.setModel(new javax.swing.table.DefaultTableModel(
+            new Object[][]{},
+            new String[]{"ID User", "Username", "Fullname", "Email", "Role"}
+        ));
+        loadData("");
+        
+    }
+    
+    public void loadData(String keyword) {
+        try{
+            List<user> list = userImpl.getAll(keyword);
+            DefaultTableModel model = (DefaultTableModel) tableUsers.getModel();
+            model.setRowCount(0);
+            for (user usr : list) {
+                model.addRow(new Object[]{
+                    usr.getIdUser(),
+                    usr.getUsername(),
+                    usr.getFullname(),
+                    usr.getEmail(),
+                    usr.getRole()
+                });
+            }
+        } catch(SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Gagal memuat data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -26,21 +59,242 @@ public class UserView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tableUsers = new javax.swing.JTable();
+        tfCari = new javax.swing.JTextField();
+        btnCari = new javax.swing.JButton();
+        btnEdit = new javax.swing.JButton();
+        btnHapus = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        btnBack = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Kelola Users");
+
+        jPanel1.setBackground(new java.awt.Color(18, 18, 28));
+        jPanel1.setForeground(new java.awt.Color(202, 196, 212));
+
+        jScrollPane1.setBackground(new java.awt.Color(27, 27, 37));
+
+        tableUsers.setBackground(new java.awt.Color(27, 27, 37));
+        tableUsers.setForeground(new java.awt.Color(202, 196, 212));
+        tableUsers.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "ID User", "Username", "Fullname", "Email", "Role"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        tableUsers.setGridColor(new java.awt.Color(27, 27, 37));
+        jScrollPane1.setViewportView(tableUsers);
+
+        tfCari.setBackground(new java.awt.Color(41, 41, 52));
+        tfCari.setForeground(new java.awt.Color(228, 225, 239));
+        tfCari.setToolTipText("Cari user...");
+        tfCari.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
+
+        btnCari.setBackground(new java.awt.Color(41, 41, 52));
+        btnCari.setForeground(new java.awt.Color(202, 196, 212));
+        btnCari.setText("Cari");
+        btnCari.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
+        btnCari.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCariMouseClicked(evt);
+            }
+        });
+
+        btnEdit.setBackground(new java.awt.Color(41, 41, 52));
+        btnEdit.setForeground(new java.awt.Color(202, 196, 212));
+        btnEdit.setText("Edit");
+        btnEdit.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
+        btnEdit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnEditMouseClicked(evt);
+            }
+        });
+
+        btnHapus.setBackground(new java.awt.Color(41, 41, 52));
+        btnHapus.setForeground(new java.awt.Color(202, 196, 212));
+        btnHapus.setText("Hapus");
+        btnHapus.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
+        btnHapus.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnHapusMouseClicked(evt);
+            }
+        });
+
+        jPanel2.setBackground(new java.awt.Color(27, 27, 37));
+        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(73, 69, 82)));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(206, 189, 255));
+        jLabel5.setText("Kelola Users");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel5)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel5)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        btnBack.setBackground(new java.awt.Color(41, 41, 52));
+        btnBack.setForeground(new java.awt.Color(202, 196, 212));
+        btnBack.setText("Kembali");
+        btnBack.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
+        btnBack.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnBackMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 2, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCari)
+                    .addComponent(btnEdit)
+                    .addComponent(btnHapus))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnBack)
+                .addGap(25, 25, 25))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnHapusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusMouseClicked
+        // TODO add your handling code here:
+        int pilihan = tableUsers.getSelectedRow();
+        
+        if (pilihan == -1) {
+            JOptionPane.showMessageDialog(this, 
+                "Pilih data yang ingin dihapus terlebih dahulu.", 
+                "Tidak Ada Data Dipilih", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String idUser = tableUsers.getValueAt(pilihan, 0).toString();
+        String username = tableUsers.getValueAt(pilihan, 1).toString();
+
+        int jawaban = JOptionPane.showConfirmDialog(this, 
+            "Hapus user \"" + username + "\"?\nTindakan ini tidak bisa dibatalkan.", 
+            "Konfirmasi Hapus", 
+            JOptionPane.YES_NO_OPTION, 
+            JOptionPane.WARNING_MESSAGE);
+
+        if (jawaban == JOptionPane.YES_OPTION) {
+            try {
+                userImpl.delete(idUser);
+                loadData("");
+                JOptionPane.showMessageDialog(this, 
+                    "User \"" + username + "\" berhasil dihapus.", 
+                    "Berhasil", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, 
+                    "Gagal menghapus data.\n" + e.getMessage(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnHapusMouseClicked
+
+    private void btnCariMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCariMouseClicked
+        // TODO add your handling code here:
+        loadData(tfCari.getText().trim());
+    }//GEN-LAST:event_btnCariMouseClicked
+
+    private void btnEditMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEditMouseClicked
+        // TODO add your handling code here:
+        int pilihan = tableUsers.getSelectedRow();
+        
+        if (pilihan == -1) {
+            JOptionPane.showMessageDialog(this, 
+                "Pilih data yang ingin diedit terlebih dahulu.", 
+                "Tidak Ada Data Dipilih", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String idUser = tableUsers.getValueAt(pilihan, 0).toString();
+        try {
+            new UserForm(idUser).setVisible(true);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Gagal membuka form edit.\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        this.dispose();
+    }//GEN-LAST:event_btnEditMouseClicked
+
+    private void btnBackMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBackMouseClicked
+        // TODO add your handling code here:
+        new DashboardView().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnBackMouseClicked
 
     /**
      * @param args the command line arguments
@@ -78,5 +332,15 @@ public class UserView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBack;
+    private javax.swing.JButton btnCari;
+    private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnHapus;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tableUsers;
+    private javax.swing.JTextField tfCari;
     // End of variables declaration//GEN-END:variables
 }
