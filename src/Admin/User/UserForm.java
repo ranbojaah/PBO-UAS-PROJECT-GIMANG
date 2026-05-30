@@ -20,6 +20,7 @@ public class UserForm extends javax.swing.JFrame {
      */
     public UserForm(String idUser) throws SQLException {
         initComponents();
+        this.setLocationRelativeTo(this);
         loadData(idUser);
     }
     private void loadData(String idUser) throws SQLException {
