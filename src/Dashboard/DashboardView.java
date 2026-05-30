@@ -22,6 +22,10 @@ public class DashboardView extends javax.swing.JFrame {
      */
     public DashboardView() {
         initComponents();
+        if (Session.getUser() != null) {
+            String namaUser = Session.getUser().getFullname(); 
+            lblWelcome.setText("Halo, " + namaUser);
+        }
         if (Session.getRole().equals("admin")) {
             btnUserView.setVisible(true);
         } else {
@@ -39,6 +43,7 @@ public class DashboardView extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        lblWelcome = new javax.swing.JLabel();
         btnGamesView = new javax.swing.JButton();
         btnGenresView = new javax.swing.JButton();
         btnListingsView = new javax.swing.JButton();
@@ -48,14 +53,44 @@ public class DashboardView extends javax.swing.JFrame {
         jLogout = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Dashboard");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jPanel1.setBackground(new java.awt.Color(18, 18, 28));
 
+        lblWelcome.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblWelcome.setForeground(new java.awt.Color(255, 255, 255));
+        lblWelcome.setText("Halo, User");
+
+        btnGamesView.setBackground(new java.awt.Color(22, 27, 34));
+        btnGamesView.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        btnGamesView.setForeground(new java.awt.Color(255, 255, 255));
+        btnGamesView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/games.png"))); // NOI18N
         btnGamesView.setText("Games");
+        btnGamesView.setBorderPainted(false);
+        btnGamesView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnGamesView.setIconTextGap(12);
+        btnGamesView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
+        btnGenresView.setBackground(new java.awt.Color(22, 27, 34));
+        btnGenresView.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        btnGenresView.setForeground(new java.awt.Color(255, 255, 255));
+        btnGenresView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/genres.png"))); // NOI18N
         btnGenresView.setText("Genres");
+        btnGenresView.setBorderPainted(false);
+        btnGenresView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnGenresView.setIconTextGap(12);
+        btnGenresView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
+        btnListingsView.setBackground(new java.awt.Color(22, 27, 34));
+        btnListingsView.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        btnListingsView.setForeground(new java.awt.Color(255, 255, 255));
+        btnListingsView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/listing.png"))); // NOI18N
         btnListingsView.setText("Listings");
+        btnListingsView.setBorderPainted(false);
+        btnListingsView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnListingsView.setIconTextGap(12);
+        btnListingsView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnListingsView.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnListingsViewMouseClicked(evt);
@@ -67,27 +102,54 @@ public class DashboardView extends javax.swing.JFrame {
             }
         });
 
+        btnReviewsView.setBackground(new java.awt.Color(22, 27, 34));
+        btnReviewsView.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        btnReviewsView.setForeground(new java.awt.Color(255, 255, 255));
+        btnReviewsView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/review.png"))); // NOI18N
         btnReviewsView.setText("Reviews");
+        btnReviewsView.setBorderPainted(false);
+        btnReviewsView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnReviewsView.setIconTextGap(12);
+        btnReviewsView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnReviewsView.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnReviewsViewActionPerformed(evt);
             }
         });
 
+        btnTransactView.setBackground(new java.awt.Color(22, 27, 34));
+        btnTransactView.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        btnTransactView.setForeground(new java.awt.Color(255, 255, 255));
+        btnTransactView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/transaction.png"))); // NOI18N
         btnTransactView.setText("Transactions");
+        btnTransactView.setBorderPainted(false);
+        btnTransactView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnTransactView.setIconTextGap(12);
+        btnTransactView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnTransactView.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTransactViewActionPerformed(evt);
             }
         });
 
+        btnUserView.setBackground(new java.awt.Color(22, 27, 34));
+        btnUserView.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        btnUserView.setForeground(new java.awt.Color(255, 255, 255));
+        btnUserView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/users.png"))); // NOI18N
         btnUserView.setText("Users");
+        btnUserView.setBorderPainted(false);
+        btnUserView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnUserView.setIconTextGap(12);
+        btnUserView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnUserView.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnUserViewMouseClicked(evt);
             }
         });
 
+        jLogout.setBackground(new java.awt.Color(147, 0, 10));
+        jLogout.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLogout.setForeground(new java.awt.Color(255, 218, 214));
         jLogout.setText("Logout");
         jLogout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -100,48 +162,51 @@ public class DashboardView extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(63, 63, 63)
+                .addGap(50, 50, 50)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(btnListingsView)
-                        .addComponent(btnGamesView))
-                    .addComponent(btnUserView))
-                .addGap(72, 72, 72)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(lblWelcome, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnGenresView)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
-                        .addComponent(jLogout))
-                    .addComponent(btnReviewsView)
-                    .addComponent(btnTransactView))
-                .addContainerGap())
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnGamesView, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnReviewsView, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnGenresView, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnTransactView, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnListingsView, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnUserView, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(50, 50, 50))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(67, 67, 67)
+                .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnGamesView)
-                    .addComponent(btnGenresView)
-                    .addComponent(jLogout))
-                .addGap(60, 60, 60)
+                    .addComponent(jLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblWelcome, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(51, 51, 51)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnListingsView)
-                    .addComponent(btnReviewsView))
-                .addGap(60, 60, 60)
+                    .addComponent(btnGamesView, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnGenresView, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnListingsView, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnTransactView)
-                    .addComponent(btnUserView))
-                .addContainerGap(44, Short.MAX_VALUE))
+                    .addComponent(btnReviewsView, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnTransactView, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnUserView, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(50, 50, 50))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -149,6 +214,7 @@ public class DashboardView extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnUserViewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnUserViewMouseClicked
@@ -185,7 +251,6 @@ public class DashboardView extends javax.swing.JFrame {
 
     private void jLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLogoutActionPerformed
         // TODO add your handling code here:
-        // 1. Tampilkan konfirmasi biar ga sengaja kepencet logout
         int konfirmasi = JOptionPane.showConfirmDialog(
             this, 
             "Apakah Anda yakin ingin logout?", 
@@ -195,23 +260,15 @@ public class DashboardView extends javax.swing.JFrame {
         );
         
         if (konfirmasi == JOptionPane.YES_OPTION) {
-            // 2. Clear data user di class Session (keamanan biar ga kesimpen)
-            // Asumsi di class util.Session ada method clear() atau set user jadi null
             Session.clear(); 
-            
-            // 3. Buka form Login kembali
-            // Ganti 'LoginView' sesuai dengan nama class Form Login punyamu
             new Connection.Login().setVisible(true); 
-            
-            // 4. Tutup halaman Dashboard ini
             this.dispose();
         }
     }//GEN-LAST:event_jLogoutActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    
+    private void btnGenresViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenresViewActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnGenresViewActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGamesView;
@@ -222,5 +279,6 @@ public class DashboardView extends javax.swing.JFrame {
     private javax.swing.JButton btnUserView;
     private javax.swing.JButton jLogout;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel lblWelcome;
     // End of variables declaration//GEN-END:variables
 }
