@@ -23,6 +23,7 @@ public class UserView extends javax.swing.JFrame {
      */
     public UserView() {
         initComponents();
+        this.setLocationRelativeTo(this);
         tableUsers.setModel(new javax.swing.table.DefaultTableModel(
             new Object[][]{},
             new String[]{"ID User", "Username", "Fullname", "Email", "Role"}
