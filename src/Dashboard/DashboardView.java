@@ -4,6 +4,7 @@
  */
 package Dashboard;
 
+import Admin.Genre.GenreView;
 import Admin.User.UserView;
 import Admin.Listing.ListingView;
 import Admin.Transaksi.TransaksiView;
@@ -81,6 +82,11 @@ public class DashboardView extends javax.swing.JFrame {
         btnGenresView.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnGenresView.setIconTextGap(12);
         btnGenresView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnGenresView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenresViewActionPerformed(evt);
+            }
+        });
 
         btnListingsView.setBackground(new java.awt.Color(22, 27, 34));
         btnListingsView.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
@@ -268,6 +274,8 @@ public class DashboardView extends javax.swing.JFrame {
 
     private void btnGenresViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenresViewActionPerformed
         // TODO add your handling code here:
+        new GenreView(Session.getUser()).setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnGenresViewActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
