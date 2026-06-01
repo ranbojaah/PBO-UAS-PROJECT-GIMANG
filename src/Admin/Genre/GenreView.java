@@ -6,6 +6,8 @@ package Admin.Genre;
 
 import Dashboard.DashboardView;
 import entity.user;
+import implement.GenreImpl;
+import interfc.GenreInterfc;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -13,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 /**
@@ -23,6 +26,7 @@ public class GenreView extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GenreView.class.getName());
     private user currentUser;
+    private GenreInterfc genreService = new GenreImpl();
 
     
     /**
@@ -33,6 +37,7 @@ public class GenreView extends javax.swing.JFrame {
         this.currentUser = usr;
         styleTable();
         checkUserRole();
+        loadData();
     }
     
     private void checkUserRole() {
@@ -54,6 +59,25 @@ public class GenreView extends javax.swing.JFrame {
             btTambahGenre.setVisible(false);
             btEditGenre.setVisible(false);
             btHapusGenre.setVisible(false);
+        }
+    }
+    
+    public void loadData() {
+        DefaultTableModel model = (DefaultTableModel) tbGenre.getModel();
+        model.setRowCount(0); // Reset isi tabel biar ga duplikat
+
+        try {
+            java.util.List<entity.genre> list = genreService.getAllGenre();
+            for (entity.genre g : list) {
+                model.addRow(new Object[]{
+                    g.getIdGenre(),
+                    g.getNamaGenre().toUpperCase(), // Biar rapi seragam kapital
+                    g.getTotalGame() + " Game"
+                });
+            }
+        } catch (java.sql.SQLException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data genre: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
     
@@ -276,10 +300,65 @@ public class GenreView extends javax.swing.JFrame {
 
     private void btEditGenreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditGenreActionPerformed
         // TODO add your handling code here:
+        int selectedRow = tbGenre.getSelectedRow();
+        if (selectedRow == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih baris genre di tabel yang ingin diedit terlebih dahulu!", "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Mengambil data dari baris tabel yang diklik
+        String idGenre = tbGenre.getValueAt(selectedRow, 0).toString();
+        String namaGenre = tbGenre.getValueAt(selectedRow, 1).toString();
+
+        // Membungkus data ke dalam objek model entity genre
+        entity.genre gObjek = new entity.genre();
+        gObjek.setIdGenre(idGenre);
+        gObjek.setNamaGenre(namaGenre);
+
+        // Buka GenreForm menggunakan Constructor ke-2 (Mengirim data objek genre)
+        GenreForm formEdit = new GenreForm(currentUser, this, gObjek);
+        formEdit.setVisible(true);
     }//GEN-LAST:event_btEditGenreActionPerformed
 
     private void btHapusGenreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btHapusGenreActionPerformed
         // TODO add your handling code here:
+        int selectedRow = tbGenre.getSelectedRow();
+        if (selectedRow == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih genre yang ingin dihapus terlebih dahulu!", "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // 1. Ambil data total game dari kolom indeks ke-2 (Kolom TOTAL GAME)
+        String totalGameStr = tbGenre.getValueAt(selectedRow, 2).toString(); // Isinya misal "3 Game" atau "0 Game"
+
+        // 2. Proteksi: Jika jumlah game lebih dari 0, langsung blokir!
+        if (!totalGameStr.startsWith("0")) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                    "Genre ini tidak bisa dihapus karena masih memiliki game aktif!", 
+                    "Akses Ditolak", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return; // Menghentikan fungsi hapus, aman!
+        }
+
+        // Jika lolos (0 Game), baru lanjut ke proses konfirmasi hapus biasa
+        String idGenre = tbGenre.getValueAt(selectedRow, 0).toString();
+        String namaGenre = tbGenre.getValueAt(selectedRow, 1).toString();
+
+        int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(this, 
+                "Apakah Anda yakin ingin menghapus genre [" + idGenre + " - " + namaGenre + "]?", 
+                "Konfirmasi Hapus", javax.swing.JOptionPane.YES_NO_OPTION);
+
+        if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                boolean berhasil = genreService.deleteGenre(idGenre);
+                if (berhasil) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Genre berhasil dihapus!");
+                    loadData(); // Refresh tabel
+                }
+            } catch (java.sql.SQLException ex) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus database error.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+            }
+        }
     }//GEN-LAST:event_btHapusGenreActionPerformed
 
     private void btDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDashboardActionPerformed

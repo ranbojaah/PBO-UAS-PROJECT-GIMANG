@@ -5,6 +5,11 @@
 package Admin.Genre;
 
 import entity.user;
+import entity.genre; 
+import interfc.GenreInterfc;
+import implement.GenreImpl;
+import javax.swing.JOptionPane;
+import java.sql.SQLException;
 
 /**
  *
@@ -15,6 +20,11 @@ public class GenreForm extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GenreForm.class.getName());
      private user currentUser;
      private GenreView genreView;
+     
+     private GenreInterfc genreService = new GenreImpl();
+    private genre selectedGenre; // Menyimpan data genre yang akan diedit
+    private boolean isEditMode = false; // Flag penanda mode form
+    private String generatedId;
     
     /**
      * Creates new form GenreForm
@@ -23,6 +33,33 @@ public class GenreForm extends javax.swing.JFrame {
         initComponents();
         this.currentUser = currentUser;
         this.genreView = parentView;
+        this.isEditMode = false;
+        
+        lbJudulForm.setText("Tambah Genre Baru");
+        prepareAutoId(); // Generate ID otomatis saat form dibuka
+    }
+    
+    /**
+     * CONSTRUCTOR 2: Untuk Mode EDIT DATA (Overloading)
+     */
+    public GenreForm(user currentUser, GenreView parentView, genre g) {
+        initComponents();
+        this.currentUser = currentUser;
+        this.genreView = parentView;
+        this.selectedGenre = g;
+        this.isEditMode = true;
+        
+        lbJudulForm.setText("Edit Data Genre");
+        // Isi textfield dengan nama genre yang dipilih dari tabel parentView
+        tfNamaGenre.setText(g.getNamaGenre()); 
+    }
+    
+    private void prepareAutoId() {
+        try {
+            this.generatedId = genreService.generateNewGenreId();
+        } catch (SQLException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -122,6 +159,46 @@ public class GenreForm extends javax.swing.JFrame {
 
     private void btSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSimpanActionPerformed
         // TODO add your handling code here:
+        String namaGenreInput = tfNamaGenre.getText().trim();
+        
+        // Validasi input tidak boleh kosong
+        if (namaGenreInput.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nama genre tidak boleh kosong!", "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        try {
+            if (isEditMode) {
+                // Skenario 1: Proses Jalur UPDATE DATA
+                selectedGenre.setNamaGenre(namaGenreInput);
+                
+                boolean berhasilUpdate = genreService.updateGenre(selectedGenre);
+                if (berhasilUpdate) {
+                    JOptionPane.showMessageDialog(this, "Data genre berhasil diperbarui!");
+                    genreView.loadData(); // Memicu refresh tabel di GenreView secara realtime
+                    this.dispose(); // Tutup form input
+                } else {
+                    JOptionPane.showMessageDialog(this, "Gagal memperbarui data genre.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                // Skenario 2: Proses Jalur INSERT DATA BARU
+                genre gBaru = new genre();
+                gBaru.setIdGenre(generatedId);
+                gBaru.setNamaGenre(namaGenreInput);
+                
+                boolean berhasilInsert = genreService.insertGenre(gBaru);
+                if (berhasilInsert) {
+                    JOptionPane.showMessageDialog(this, "Genre baru berhasil ditambahkan!");
+                    genreView.loadData(); // Memicu refresh tabel di GenreView secara realtime
+                    this.dispose(); // Tutup form input
+                } else {
+                    JOptionPane.showMessageDialog(this, "Gagal menambahkan genre baru.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan pada database: " + ex.getMessage(), "Error Database", JOptionPane.ERROR_MESSAGE);
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btSimpanActionPerformed
 
     private void btBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btBatalActionPerformed
