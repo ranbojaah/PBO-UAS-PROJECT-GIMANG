@@ -728,8 +728,8 @@ public class TransaksiView extends javax.swing.JFrame {
 
     private void btDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDashboardActionPerformed
         // TODO add your handling code here:
-      new DashboardView().setVisible(true);
-        this.dispose();  
+        new DashboardView().setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btDashboardActionPerformed
 
     /**

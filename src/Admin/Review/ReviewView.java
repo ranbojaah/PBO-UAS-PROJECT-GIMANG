@@ -156,7 +156,7 @@ private Reviewimpl reviewImpl = new Reviewimpl();
 model.addRow(new Object[] {
     r.getReviewId(),
     r.getGameTitle(),
-    r.getReviewerUsername(), // Gunakan sesuai properti di entity/impl milikmu
+    r.getReviewerUsername(), 
     r.getRating() + " / 5",
     r.getReviewDate()
 });
@@ -224,7 +224,7 @@ model.addRow(new Object[] {
    
 private void showDetailReview(String reviewId) {
     try {
-        // 1. Ambil data review spesifik dari database via class implementasi
+
         Review r = reviewImpl.getById(reviewId);
 
         // Validasi jika data tidak ditemukan
@@ -232,17 +232,15 @@ private void showDetailReview(String reviewId) {
             return;
         }
 
-        // 2. Distribusikan data dari objek 'r' ke komponen UI sesuai gambar layout-mu
-        lbGameListing.setText(r.getGameTitle());              // Menampilkan judul game
-        lbReviewer.setText(r.getReviewerUsername());          // Menampilkan nama pembeli
-        lbRatingScore.setText(r.getRating() + " / 5");        // Menampilkan skor rating
-        lbSubmissionDate.setText(String.valueOf(r.getReviewDate())); // Menampilkan tanggal
-        
-        // JTextArea untuk Komentar Lengkap
-        tfKomentarLengkap.setText(r.getComment());            // Menampilkan isi review lengkap
 
-        // 3. Simpan ID yang sedang aktif ke variabel global 
-        // Ini berguna saat Admin mengklik tombol 'Delete Permanently' atau 'Flag as Spam'
+        lbGameListing.setText(r.getGameTitle());             
+        lbReviewer.setText(r.getReviewerUsername());          
+        lbRatingScore.setText(r.getRating() + " / 5");        
+        lbSubmissionDate.setText(String.valueOf(r.getReviewDate()));
+        
+
+        tfKomentarLengkap.setText(r.getComment());             
+
         selectedReviewId = r.getReviewId();
 
     } catch (SQLException e) {
