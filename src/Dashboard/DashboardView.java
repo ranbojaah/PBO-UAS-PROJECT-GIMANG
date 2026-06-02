@@ -6,6 +6,7 @@ package Dashboard;
 
 import Admin.User.UserView;
 import Admin.Listing.ListingView;
+import Admin.Review.ReviewView;
 import Admin.Transaksi.TransaksiView;
 import entity.user;
 import javax.swing.JOptionPane;
@@ -235,6 +236,8 @@ public class DashboardView extends javax.swing.JFrame {
 
     private void btnReviewsViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReviewsViewActionPerformed
         // TODO add your handling code here:
+        new ReviewView(Session.getUser()).setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnReviewsViewActionPerformed
 
     private void btnTransactViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransactViewActionPerformed
