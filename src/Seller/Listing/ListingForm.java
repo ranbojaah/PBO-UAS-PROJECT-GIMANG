@@ -212,7 +212,7 @@ public class ListingForm extends javax.swing.JFrame {
         DefaultComboBoxModel<String> gameModel = new DefaultComboBoxModel<>();
         gameModel.addElement("Pilih game dari katalog"); // placeholder
         try {
-            String sql = "SELECT game_id, title FROM games ORDER BY title ASC";
+            String sql = "SELECT game_id, title FROM games WHERE is_delete = FALSE ORDER BY title ASC";
             PreparedStatement st = Koneksi.getConnection().prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
