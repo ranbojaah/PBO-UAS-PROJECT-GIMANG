@@ -3,7 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package Admin.Game;
-
+import javax.swing.table.DefaultTableModel;
+import java.sql.Connection;
+import Connection.Koneksi;
+import java.sql.SQLException;
 /**
  *
  * @author Asus
@@ -17,7 +20,45 @@ public class GameView extends javax.swing.JFrame {
      */
     public GameView() {
         initComponents();
+        load_table();
     }
+    private void load_table() {
+    // 1. Membuat struktur kolom tabel
+    DefaultTableModel model = new DefaultTableModel();
+    model.addColumn("ID");
+    model.addColumn("Judul");
+    model.addColumn("Genre");
+    model.addColumn("Platform");
+    model.addColumn("Tahun");
+    
+    // 2. Menarik data dari database
+    try {
+        String sql = "SELECT * FROM game ORDER BY id_game ASC";
+        
+        // Memanggil method getConnection() dari class Koneksi milikmu
+        Connection conn = Koneksi.getConnection();
+        java.sql.Statement stm = conn.createStatement();
+        java.sql.ResultSet res = stm.executeQuery(sql);
+        
+        // 3. Looping: selama data di database masih ada, masukkan ke tabel
+        while (res.next()) {
+            model.addRow(new Object[]{
+                res.getString("id_game"),
+                res.getString("judul"),
+                res.getString("genre"),
+                res.getString("platform"),
+                res.getString("tahun_rilis")
+            });
+        }
+        
+        // 4. Terapkan model ini ke JTable-mu (pastikan nama variabelnya tblGame)
+        tblGame.setModel(model);
+        
+    } catch (SQLException e) {
+        System.err.println("Gagal memuat data tabel: " + e.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -28,21 +69,265 @@ public class GameView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        lblGame = new javax.swing.JLabel();
+        txtCari = new javax.swing.JTextField();
+        btnHapus = new javax.swing.JButton();
+        btnTambah = new javax.swing.JButton();
+        btnEdit = new javax.swing.JButton();
+        lblSeparator = new javax.swing.JLabel();
+        lblTotalGame = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblGame = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
+        lblDetailJudul = new javax.swing.JLabel();
+        lblInformasi = new javax.swing.JLabel();
+        lblDev = new javax.swing.JLabel();
+        lblGenre = new javax.swing.JLabel();
+        lblPlatform = new javax.swing.JLabel();
+        lblTahun = new javax.swing.JLabel();
+        lblDetDeveloper = new javax.swing.JLabel();
+        lblDetGenre = new javax.swing.JLabel();
+        lblDetPlatform = new javax.swing.JLabel();
+        lblDetTahun = new javax.swing.JLabel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(1280, 720));
+
+        jPanel1.setBackground(new java.awt.Color(27, 27, 37));
+
+        lblGame.setBackground(new java.awt.Color(139, 128, 173));
+        lblGame.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
+        lblGame.setForeground(new java.awt.Color(139, 128, 173));
+        lblGame.setText("Semua Game");
+
+        txtCari.addActionListener(this::txtCariActionPerformed);
+
+        btnHapus.setBackground(new java.awt.Color(27, 27, 37));
+        btnHapus.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
+        btnHapus.setForeground(new java.awt.Color(255, 0, 0));
+        btnHapus.setText("Hapus");
+        btnHapus.addActionListener(this::btnHapusActionPerformed);
+
+        btnTambah.setBackground(new java.awt.Color(206, 189, 255));
+        btnTambah.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
+        btnTambah.setForeground(new java.awt.Color(56, 19, 133));
+        btnTambah.setText("+ Tambah Game");
+        btnTambah.addActionListener(this::btnTambahActionPerformed);
+
+        btnEdit.setBackground(new java.awt.Color(27, 27, 37));
+        btnEdit.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
+        btnEdit.setForeground(new java.awt.Color(206, 189, 255));
+        btnEdit.setText("Edit");
+        btnEdit.addActionListener(this::btnEditActionPerformed);
+
+        lblSeparator.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
+        lblSeparator.setForeground(new java.awt.Color(139, 128, 173));
+        lblSeparator.setText("|");
+
+        lblTotalGame.setBackground(new java.awt.Color(139, 128, 173));
+        lblTotalGame.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        lblTotalGame.setForeground(new java.awt.Color(139, 128, 173));
+        lblTotalGame.setText("0 Game Tercatat");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(33, 33, 33)
+                .addComponent(lblGame)
+                .addGap(18, 18, 18)
+                .addComponent(lblSeparator)
+                .addGap(18, 18, 18)
+                .addComponent(lblTotalGame)
+                .addGap(63, 63, 63)
+                .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(41, 41, 41)
+                .addComponent(btnTambah)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnEdit)
+                .addGap(18, 18, 18)
+                .addComponent(btnHapus)
+                .addGap(18, 18, 18))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblGame, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblSeparator)
+                        .addComponent(lblTotalGame, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnHapus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtCari)
+                            .addComponent(btnTambah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(22, Short.MAX_VALUE))
+        );
+
+        tblGame.setBackground(new java.awt.Color(31, 31, 41));
+        tblGame.setForeground(new java.awt.Color(202, 196, 212));
+        tblGame.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Judul", "Genre", "Platform", "Tahun"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tblGame);
+
+        jPanel2.setBackground(new java.awt.Color(41, 41, 52));
+
+        lblDetailJudul.setFont(new java.awt.Font("Verdana", 1, 18)); // NOI18N
+        lblDetailJudul.setForeground(new java.awt.Color(206, 189, 255));
+        lblDetailJudul.setText("Detail - Elden Ring");
+
+        lblInformasi.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lblInformasi.setForeground(new java.awt.Color(206, 189, 255));
+        lblInformasi.setText("Informasi Game");
+
+        lblDev.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lblDev.setForeground(new java.awt.Color(206, 189, 255));
+        lblDev.setText("Developer");
+
+        lblGenre.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lblGenre.setForeground(new java.awt.Color(206, 189, 255));
+        lblGenre.setText("Genre");
+
+        lblPlatform.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lblPlatform.setForeground(new java.awt.Color(206, 189, 255));
+        lblPlatform.setText("Platform");
+
+        lblTahun.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lblTahun.setForeground(new java.awt.Color(206, 189, 255));
+        lblTahun.setText("Tahun");
+
+        lblDetDeveloper.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lblDetDeveloper.setForeground(new java.awt.Color(206, 189, 255));
+
+        lblDetGenre.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lblDetGenre.setForeground(new java.awt.Color(206, 189, 255));
+
+        lblDetPlatform.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lblDetPlatform.setForeground(new java.awt.Color(206, 189, 255));
+
+        lblDetTahun.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lblDetTahun.setForeground(new java.awt.Color(206, 189, 255));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(lblDetailJudul)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(lblGenre)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblDetGenre, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(lblDev)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 126, Short.MAX_VALUE)
+                                .addComponent(lblDetDeveloper, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(lblInformasi)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(lblTahun)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblDetTahun, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(lblPlatform)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblDetPlatform, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(967, 967, 967))))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(56, Short.MAX_VALUE)
+                .addComponent(lblDetailJudul)
+                .addGap(18, 18, 18)
+                .addComponent(lblInformasi)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblDev)
+                    .addComponent(lblDetDeveloper))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblGenre)
+                    .addComponent(lblDetGenre))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblPlatform)
+                    .addComponent(lblDetPlatform))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblTahun)
+                    .addComponent(lblDetTahun))
+                .addGap(69, 69, 69))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCariActionPerformed
+
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnHapusActionPerformed
+
+    private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
+        // TODO add your handling code here:
+        GameForm tambahForm = new GameForm(this, true);
+        tambahForm.setLocationRelativeTo(this); 
+        tambahForm.setVisible(true);
+        load_table();
+    }//GEN-LAST:event_btnTambahActionPerformed
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEditActionPerformed
 
     /**
      * @param args the command line arguments
@@ -70,5 +355,26 @@ public class GameView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnHapus;
+    private javax.swing.JButton btnTambah;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblDetDeveloper;
+    private javax.swing.JLabel lblDetGenre;
+    private javax.swing.JLabel lblDetPlatform;
+    private javax.swing.JLabel lblDetTahun;
+    private javax.swing.JLabel lblDetailJudul;
+    private javax.swing.JLabel lblDev;
+    private javax.swing.JLabel lblGame;
+    private javax.swing.JLabel lblGenre;
+    private javax.swing.JLabel lblInformasi;
+    private javax.swing.JLabel lblPlatform;
+    private javax.swing.JLabel lblSeparator;
+    private javax.swing.JLabel lblTahun;
+    private javax.swing.JLabel lblTotalGame;
+    private javax.swing.JTable tblGame;
+    private javax.swing.JTextField txtCari;
     // End of variables declaration//GEN-END:variables
 }

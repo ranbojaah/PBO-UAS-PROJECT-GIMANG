@@ -4,6 +4,9 @@
  */
 package Admin.Game;
 
+import java.awt.HeadlessException;
+import java.sql.SQLException;
+
 /**
  *
  * @author Asus
@@ -19,6 +22,10 @@ public class GameForm extends javax.swing.JFrame {
         initComponents();
     }
 
+    GameForm(GameView aThis, boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,21 +35,257 @@ public class GameForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel3 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        lblTambahGame = new javax.swing.JLabel();
+        lblDataKatalogGame = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        lblGenerate = new javax.swing.JLabel();
+        txtTahun = new javax.swing.JTextField();
+        lblTahun = new javax.swing.JLabel();
+        txtIdGame = new javax.swing.JTextField();
+        lblIdGame = new javax.swing.JLabel();
+        lblJudulGame = new javax.swing.JLabel();
+        txtJudul = new javax.swing.JTextField();
+        lblGenre = new javax.swing.JLabel();
+        cbGenre = new javax.swing.JComboBox<>();
+        cbPlatform = new javax.swing.JComboBox<>();
+        lblDeveloper = new javax.swing.JLabel();
+        txtDeveloper = new javax.swing.JTextField();
+        lblDeskripsi = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtDeskripsi = new javax.swing.JTextArea();
+        jSeparator2 = new javax.swing.JSeparator();
+        btnBatal = new javax.swing.JButton();
+        btnSimpan = new javax.swing.JButton();
+        lblPlatform = new javax.swing.JLabel();
+
+        jLabel3.setText("jLabel3");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(495, 562));
+
+        jPanel1.setBackground(new java.awt.Color(48, 48, 46));
+
+        lblTambahGame.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        lblTambahGame.setForeground(new java.awt.Color(217, 216, 213));
+        lblTambahGame.setText("Tambah Game");
+
+        lblDataKatalogGame.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        lblDataKatalogGame.setForeground(new java.awt.Color(217, 216, 213));
+        lblDataKatalogGame.setText("Data Katalog Game");
+
+        lblGenerate.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+        lblGenerate.setForeground(new java.awt.Color(217, 216, 213));
+        lblGenerate.setText("Generate Otomatis");
+
+        lblTahun.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        lblTahun.setForeground(new java.awt.Color(217, 216, 213));
+        lblTahun.setText("Tahun Rilis");
+
+        txtIdGame.setEditable(false);
+
+        lblIdGame.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        lblIdGame.setForeground(new java.awt.Color(217, 216, 213));
+        lblIdGame.setText("ID Game");
+
+        lblJudulGame.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        lblJudulGame.setForeground(new java.awt.Color(217, 216, 213));
+        lblJudulGame.setText("Judul Game *");
+
+        lblGenre.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        lblGenre.setForeground(new java.awt.Color(217, 216, 213));
+        lblGenre.setText("Genre *");
+
+        cbGenre.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbGenre.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        cbGenre.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        cbPlatform.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        lblDeveloper.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        lblDeveloper.setForeground(new java.awt.Color(217, 216, 213));
+        lblDeveloper.setText("Developer/Publisher *");
+
+        txtDeveloper.setText("jTextField1");
+
+        lblDeskripsi.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        lblDeskripsi.setForeground(new java.awt.Color(217, 216, 213));
+        lblDeskripsi.setText("Deskripsi Singkat");
+
+        txtDeskripsi.setColumns(20);
+        txtDeskripsi.setRows(5);
+        jScrollPane1.setViewportView(txtDeskripsi);
+
+        btnBatal.setText("Batal");
+        btnBatal.addActionListener(this::btnBatalActionPerformed);
+
+        btnSimpan.setText("Simpan Game");
+        btnSimpan.addActionListener(this::btnSimpanActionPerformed);
+
+        lblPlatform.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        lblPlatform.setForeground(new java.awt.Color(217, 216, 213));
+        lblPlatform.setText("Platform *");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jSeparator1)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblDataKatalogGame)
+                            .addComponent(lblTambahGame)
+                            .addComponent(lblDeveloper))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtJudul)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtIdGame, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblIdGame))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtTahun, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblTahun)))
+                            .addComponent(txtDeveloper)
+                            .addComponent(lblDeskripsi)
+                            .addComponent(lblJudulGame)
+                            .addComponent(lblGenerate)
+                            .addComponent(jScrollPane1)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cbGenre, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblGenre))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblPlatform)
+                                    .addComponent(cbPlatform, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(21, 21, 21))))
+            .addComponent(jSeparator2)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnBatal)
+                .addGap(18, 18, 18)
+                .addComponent(btnSimpan)
+                .addGap(21, 21, 21))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addComponent(lblTambahGame)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblDataKatalogGame)
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblTahun)
+                    .addComponent(lblIdGame))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtIdGame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTahun, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblGenerate)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblJudulGame)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtJudul, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblGenre)
+                    .addComponent(lblPlatform))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbGenre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbPlatform, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(lblDeveloper)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtDeveloper, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lblDeskripsi)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnBatal)
+                    .addComponent(btnSimpan))
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBatalActionPerformed
+
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+        // TODO add your handling code here:
+            try {
+        // 1. Ambil data dari inputan form UI
+        String id = txtIdGame.getText();
+        String judul = txtJudul.getText();
+        String tahun = txtTahun.getText(); 
+        String genre = cbGenre.getSelectedItem().toString();
+        String platform = cbPlatform.getSelectedItem().toString();
+        String developer = txtDeveloper.getText();
+        String deskripsi = txtDeskripsi.getText();
+
+        // 2. Siapkan query SQL untuk Insert
+        String sql = "INSERT INTO game (id_game, judul, tahun_rilis, genre, platform, developer, deskripsi) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        // 3. Panggil method getConnection() dari class Koneksi milikmu
+        java.sql.Connection conn = Connection.Koneksi.getConnection();
+        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+
+        // 4. Masukkan parameter ke query
+        pst.setString(1, id);
+        pst.setString(2, judul);
+        pst.setInt(3, Integer.parseInt(tahun)); // Convert tahun ke Integer
+        pst.setString(4, genre);
+        pst.setString(5, platform);
+        pst.setString(6, developer);
+        pst.setString(7, deskripsi);
+
+        // 5. Eksekusi query (Gunakan executeUpdate untuk INSERT/UPDATE/DELETE)
+        pst.executeUpdate();
+
+        // 6. Beri notifikasi sukses
+        javax.swing.JOptionPane.showMessageDialog(null, "Data Game berhasil disimpan!");
+
+        // 7. Tutup pop-up form
+        this.dispose();
+
+    } catch (HeadlessException | NumberFormatException | SQLException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Data gagal disimpan: " + e.getMessage());
+    }
+    }//GEN-LAST:event_btnSimpanActionPerformed
 
     /**
      * @param args the command line arguments
@@ -70,5 +313,29 @@ public class GameForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBatal;
+    private javax.swing.JButton btnSimpan;
+    private javax.swing.JComboBox<String> cbGenre;
+    private javax.swing.JComboBox<String> cbPlatform;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JLabel lblDataKatalogGame;
+    private javax.swing.JLabel lblDeskripsi;
+    private javax.swing.JLabel lblDeveloper;
+    private javax.swing.JLabel lblGenerate;
+    private javax.swing.JLabel lblGenre;
+    private javax.swing.JLabel lblIdGame;
+    private javax.swing.JLabel lblJudulGame;
+    private javax.swing.JLabel lblPlatform;
+    private javax.swing.JLabel lblTahun;
+    private javax.swing.JLabel lblTambahGame;
+    private javax.swing.JTextArea txtDeskripsi;
+    private javax.swing.JTextField txtDeveloper;
+    private javax.swing.JTextField txtIdGame;
+    private javax.swing.JTextField txtJudul;
+    private javax.swing.JTextField txtTahun;
     // End of variables declaration//GEN-END:variables
 }
