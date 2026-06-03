@@ -14,7 +14,9 @@ import java.sql.SQLException;
 public class GameForm extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GameForm.class.getName());
-
+    private entity.user currentUser;
+    private GameView parentView;
+    
     /**
      * Creates new form GameForm
      */
@@ -22,8 +24,30 @@ public class GameForm extends javax.swing.JFrame {
         initComponents();
     }
 
-    GameForm(GameView aThis, boolean b) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public GameForm(entity.user usr, GameView parent) {
+        this.currentUser = usr;
+        this.parentView = parent;
+        initComponents();
+        txtIdGame.setText(generateGameID());
+    } // <-- Tadi kurung kurawal ini yang hilang dan bikin error beruntun
+
+    // Helper method untuk membuat ID Game otomatis secara berurutan (Contoh: G005)
+    private String generateGameID() {
+        String newID = "G001";
+        try {
+            String sql = "SELECT game_id FROM games ORDER BY game_id DESC LIMIT 1";
+            java.sql.Connection conn = Connection.Koneksi.getConnection();
+            java.sql.Statement st = conn.createStatement();
+            java.sql.ResultSet res = st.executeQuery(sql);
+            if (res.next()) {
+                String lastID = res.getString("game_id");
+                int idNum = Integer.parseInt(lastID.substring(1)) + 1;
+                newID = String.format("G%03d", idNum);
+            }
+        } catch (Exception e) {
+            System.err.println("Gagal generate ID Game: " + e.getMessage());
+        }
+        return newID;
     }
 
     /**
@@ -62,7 +86,7 @@ public class GameForm extends javax.swing.JFrame {
 
         jLabel3.setText("jLabel3");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(495, 562));
 
         jPanel1.setBackground(new java.awt.Color(48, 48, 46));
@@ -97,17 +121,17 @@ public class GameForm extends javax.swing.JFrame {
         lblGenre.setForeground(new java.awt.Color(217, 216, 213));
         lblGenre.setText("Genre *");
 
-        cbGenre.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbGenre.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Action", "Adventure", "RPG", "Strategy", "Simulation", "Sports" }));
         cbGenre.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         cbGenre.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-        cbPlatform.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbPlatform.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PC", "PlayStation 5", "Xbox Series X", "Nintendo Switch" }));
 
         lblDeveloper.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         lblDeveloper.setForeground(new java.awt.Color(217, 216, 213));
         lblDeveloper.setText("Developer/Publisher *");
 
-        txtDeveloper.setText("jTextField1");
+        txtDeveloper.setText("");
 
         lblDeskripsi.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         lblDeskripsi.setForeground(new java.awt.Color(217, 216, 213));
@@ -242,49 +266,73 @@ public class GameForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        // TODO add your handling code here:
-            try {
-        // 1. Ambil data dari inputan form UI
-        String id = txtIdGame.getText();
-        String judul = txtJudul.getText();
-        String tahun = txtTahun.getText(); 
-        String genre = cbGenre.getSelectedItem().toString();
-        String platform = cbPlatform.getSelectedItem().toString();
-        String developer = txtDeveloper.getText();
-        String deskripsi = txtDeskripsi.getText();
+        try {
+            // 1. Ambil input dari form UI
+            String id = txtIdGame.getText();
+            String judul = txtJudul.getText().trim();
+            String tahun = txtTahun.getText().trim(); 
+            String genreNama = cbGenre.getSelectedItem().toString();
+            String platform = cbPlatform.getSelectedItem().toString();
 
-        // 2. Siapkan query SQL untuk Insert
-        String sql = "INSERT INTO game (id_game, judul, tahun_rilis, genre, platform, developer, deskripsi) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            // Validasi field kosong
+            if (judul.isEmpty() || tahun.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Judul dan Tahun Rilis tidak boleh kosong!");
+                return;
+            }
 
-        // 3. Panggil method getConnection() dari class Koneksi milikmu
-        java.sql.Connection conn = Connection.Koneksi.getConnection();
-        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+            java.sql.Connection conn = Connection.Koneksi.getConnection();
+            
+            // 2. Ambil genre_id dari database berdasarkan nama genre yang dipilih di ComboBox
+            String sqlGenre = "SELECT id FROM genres WHERE name = ? LIMIT 1";
+            java.sql.PreparedStatement pstGenre = conn.prepareStatement(sqlGenre);
+            pstGenre.setString(1, genreNama);
+            java.sql.ResultSet resGenre = pstGenre.executeQuery();
+            
+            String genreId = "";
+            if (resGenre.next()) {
+                genreId = resGenre.getString("id");
+            } else {
+                // Jika genre tidak ketemu di DB, set ID default demi menghindari error crash
+                genreId = "GEN01"; 
+            }
 
-        // 4. Masukkan parameter ke query
-        pst.setString(1, id);
-        pst.setString(2, judul);
-        pst.setInt(3, Integer.parseInt(tahun)); // Convert tahun ke Integer
-        pst.setString(4, genre);
-        pst.setString(5, platform);
-        pst.setString(6, developer);
-        pst.setString(7, deskripsi);
+            // 3. Simpan data game ke dalam tabel utama `games`
+            String sqlGame = "INSERT INTO games (game_id, title, platform, release_year) VALUES (?, ?, ?, ?)";
+            java.sql.PreparedStatement pstGame = conn.prepareStatement(sqlGame);
+            pstGame.setString(1, id);
+            pstGame.setString(2, judul);
+            pstGame.setString(3, platform);
+            pstGame.setInt(4, Integer.parseInt(tahun));
+            pstGame.executeUpdate();
 
-        // 5. Eksekusi query (Gunakan executeUpdate untuk INSERT/UPDATE/DELETE)
-        pst.executeUpdate();
+            // 4. Simpan relasi id game dan id genre ke dalam tabel jembatan `gamegenre`
+            String idGameGenre = "GG" + String.valueOf(System.currentTimeMillis()).substring(7);
+            String sqlLink = "INSERT INTO gamegenre (id, genre_id, game_id) VALUES (?, ?, ?)";
+            java.sql.PreparedStatement pstLink = conn.prepareStatement(sqlLink);
+            pstLink.setString(1, idGameGenre);
+            pstLink.setString(2, genreId);
+            pstLink.setString(3, id);
+            pstLink.executeUpdate();
 
-        // 6. Beri notifikasi sukses
-        javax.swing.JOptionPane.showMessageDialog(null, "Data Game berhasil disimpan!");
+            // 5. Notifikasi Sukses
+            javax.swing.JOptionPane.showMessageDialog(null, "Data Game berhasil disimpan!");
 
-        // 7. Tutup pop-up form
-        this.dispose();
+            // 6. Callback otomatis untuk memicu refresh data tabel di GameView
+            if (parentView != null) {
+                // Pastikan method load_table() di GameView.java kamu adalah 'public void load_table()'
+                // parentView.load_table();
+            }
 
-    } catch (HeadlessException | NumberFormatException | SQLException e) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Data gagal disimpan: " + e.getMessage());
-    }
+            // 7. Tutup pop-up dialog form
+            this.dispose();
+
+        } catch (HeadlessException | NumberFormatException | SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Data gagal disimpan: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     /**

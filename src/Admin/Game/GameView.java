@@ -6,6 +6,7 @@ package Admin.Game;
 import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
 import Connection.Koneksi;
+import entity.user;
 import java.sql.SQLException;
 /**
  *
@@ -14,52 +15,74 @@ import java.sql.SQLException;
 public class GameView extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GameView.class.getName());
-
+    private user currentUser;
     /**
      * Creates new form GameView
      */
-    public GameView() {
+    public GameView(user usr) {
+        this.currentUser = usr;
         initComponents();
         load_table();
     }
-    private void load_table() {
-    // 1. Membuat struktur kolom tabel
-    DefaultTableModel model = new DefaultTableModel();
-    model.addColumn("ID");
-    model.addColumn("Judul");
-    model.addColumn("Genre");
-    model.addColumn("Platform");
-    model.addColumn("Tahun");
-    
-    // 2. Menarik data dari database
-    try {
-        String sql = "SELECT * FROM game ORDER BY id_game ASC";
-        
-        // Memanggil method getConnection() dari class Koneksi milikmu
-        Connection conn = Koneksi.getConnection();
-        java.sql.Statement stm = conn.createStatement();
-        java.sql.ResultSet res = stm.executeQuery(sql);
-        
-        // 3. Looping: selama data di database masih ada, masukkan ke tabel
-        while (res.next()) {
-            model.addRow(new Object[]{
-                res.getString("id_game"),
-                res.getString("judul"),
-                res.getString("genre"),
-                res.getString("platform"),
-                res.getString("tahun_rilis")
-            });
-        }
-        
-        // 4. Terapkan model ini ke JTable-mu (pastikan nama variabelnya tblGame)
-        tblGame.setModel(model);
-        
-    } catch (SQLException e) {
-        System.err.println("Gagal memuat data tabel: " + e.getMessage());
-        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
-    }
-}
+   private void load_table() {
+        // 1. Membuat struktur kolom tabel (Non-editable cell)
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; 
+            }
+        };
+        model.addColumn("ID");
+        model.addColumn("Judul");
+        model.addColumn("Genre");
+        model.addColumn("Platform");
+        model.addColumn("Tahun");
 
+        // 2. Menarik data dari database menggunakan JOIN agar genre terbaca
+        try {
+            // Query disesuaikan dengan skema tabel asli db_uas_pbo milikmu
+            String sql = "SELECT g.game_id, g.title, g.platform, g.release_year, " +
+                         "GROUP_CONCAT(gr.name SEPARATOR ', ') AS nama_genre " +
+                         "FROM games g " +
+                         "LEFT JOIN gamegenre gg ON g.game_id = gg.game_id " +
+                         "LEFT JOIN genres gr ON gg.genre_id = gr.id " +
+                         "GROUP BY g.game_id " +
+                         "ORDER BY g.game_id ASC";
+
+            Connection conn = Koneksi.getConnection();
+            java.sql.Statement stm = conn.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+
+            int totalGame = 0;
+
+            // 3. Looping data hasil query masuk ke dalam model tabel
+            while (res.next()) {
+                String genre = res.getString("nama_genre");
+                if (genre == null || genre.isEmpty()) {
+                    genre = "-"; // Antisipasi jika game belum diberi genre
+                }
+
+                model.addRow(new Object[]{
+                    res.getString("game_id"),    
+                    res.getString("title"),        
+                    genre,
+                    res.getString("platform"),
+                    res.getString("release_year")  
+                });
+                totalGame++;
+            }
+
+            // 4. Terapkan model ke JTable komponen (tblGame)
+            tblGame.setModel(model);
+
+            // 5. Perbarui komponen label total data game
+            lblTotalGame.setText(totalGame + " Game Tercatat");
+
+        } catch (SQLException e) {
+            System.err.println("Gagal memuat data tabel: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -319,10 +342,8 @@ public class GameView extends javax.swing.JFrame {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         // TODO add your handling code here:
-        GameForm tambahForm = new GameForm(this, true);
-        tambahForm.setLocationRelativeTo(this); 
-        tambahForm.setVisible(true);
-        load_table();
+        GameForm form = new GameForm(currentUser, this);
+        form.setVisible(true);
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
@@ -332,27 +353,6 @@ public class GameView extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new GameView().setVisible(true));
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEdit;

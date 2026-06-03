@@ -4,6 +4,7 @@
  */
 package Dashboard;
 
+import Admin.Game.GameView;
 import Admin.User.UserView;
 import Admin.Listing.ListingView;
 import Admin.Transaksi.TransaksiView;
@@ -52,6 +53,11 @@ public class DashboardView extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(18, 18, 28));
 
         btnGamesView.setText("Games");
+        btnGamesView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGamesViewActionPerformed(evt);
+            }
+        });
 
         btnGenresView.setText("Genres");
 
@@ -207,6 +213,12 @@ public class DashboardView extends javax.swing.JFrame {
             this.dispose();
         }
     }//GEN-LAST:event_jLogoutActionPerformed
+
+    private void btnGamesViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGamesViewActionPerformed
+        // TODO add your handling code here:
+        new GameView(Session.getUser()).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnGamesViewActionPerformed
 
     /**
      * @param args the command line arguments
