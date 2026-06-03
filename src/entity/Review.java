@@ -16,14 +16,14 @@ import java.sql.Date;
  */
 public class Review {
     private String review_id;
-    private String listing_id;
+    private String transaction_id; // UBAH: Dari listing_id menjadi transaction_id
     private String reviewer_id;
     private int rating;
     private String comment;
     private Date review_date;
 
     // Tambahan atribut untuk menampung hasil JOIN saat ditampilkan di JTable
-    private String game_title;       // Diambil dari tabel games melalui join listing -> games
+    private String game_title;       // Diambil dari tabel games melalui join transaction -> listing -> games
     private String reviewer_username; // Diambil dari tabel users/accounts berdasarkan reviewer_id
 
     public String getReviewId() {
@@ -34,12 +34,14 @@ public class Review {
         this.review_id = review_id;
     }
 
-    public String getListingId() {
-        return listing_id;
+    // UBAH: Getter untuk transaction_id
+    public String getTransactionId() {
+        return transaction_id;
     }
 
-    public void setListingId(String listing_id) {
-        this.listing_id = listing_id;
+    // UBAH: Setter untuk transaction_id
+    public void setTransactionId(String transaction_id) {
+        this.transaction_id = transaction_id;
     }
 
     public String getReviewerId() {
@@ -93,7 +95,6 @@ public class Review {
 
     public String createIdReview() throws SQLException {
         Statement st = Koneksi.getConnection().createStatement();
-        // Menggunakan klausa COUNT(*) dari nama tabel review yang sesuai di DB
         ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM reviews"); 
         rs.next();
 

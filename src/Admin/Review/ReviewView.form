@@ -178,7 +178,7 @@
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="5" rowCount="0">
                         <Column editable="false" title="ID" type="java.lang.String"/>
-                        <Column editable="false" title="GAME LISTING" type="java.lang.String"/>
+                        <Column editable="false" title="GAME " type="java.lang.String"/>
                         <Column editable="false" title="REVIEWER" type="java.lang.String"/>
                         <Column editable="false" title="RATING" type="java.lang.String"/>
                         <Column editable="false" title="KOMENTAR" type="java.lang.String"/>

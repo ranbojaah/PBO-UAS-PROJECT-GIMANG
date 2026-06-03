@@ -29,8 +29,8 @@ public interface ReviewInterfc {
     // Mengambil semua data review yang ada di database
     List<Review> getAll() throws SQLException;
     
-    // Mengambil daftar review khusus untuk satu listing tertentu
-    List<Review> getByListing(String listing_id) throws SQLException;
+    // UBAH: Mengambil daftar review khusus untuk satu transaksi tertentu
+    List<Review> getByTransaction(String transaction_id) throws SQLException;
     
     // Melakukan pencarian review berdasarkan kata kunci tertentu
     List<Review> search(String keyword) throws SQLException;

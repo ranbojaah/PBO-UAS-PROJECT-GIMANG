@@ -146,20 +146,20 @@ private Reviewimpl reviewImpl = new Reviewimpl();
     private void fillTable(List<Review> data) {
         DefaultTableModel model = new DefaultTableModel();
     
-    model.addColumn("ID REVIEW");
-    model.addColumn("GAME");
-    model.addColumn("PEMBELI");
-    model.addColumn("RATING");
-    model.addColumn("TANGGAL");
+        model.addColumn("ID REVIEW");
+        model.addColumn("GAME");
+        model.addColumn("PEMBELI");
+        model.addColumn("RATING");
+        model.addColumn("TANGGAL");
 
-    for (Review r : data) {
-model.addRow(new Object[] {
-    r.getReviewId(),
-    r.getGameTitle(),
-    r.getReviewerUsername(), 
-    r.getRating() + " / 5",
-    r.getReviewDate()
-});
+        for (Review r : data) {
+        model.addRow(new Object[] {
+        r.getReviewId(),
+        r.getGameTitle(),
+        r.getReviewerUsername(), 
+        r.getRating() + " / 5",
+        r.getReviewDate()
+    });
     }
 
     tbReview.setModel(model);
@@ -199,14 +199,6 @@ model.addRow(new Object[] {
     }
 }
    
-    public void updateStatus(String reviewId, String status) throws SQLException {
-    String sql = "UPDATE reviews SET status = ?, updated_at = NOW() WHERE review_id = ?";
-    try (PreparedStatement st = Connection.Koneksi.getConnection().prepareStatement(sql)) {
-        st.setString(1, status);
-        st.setString(2, reviewId);
-        st.executeUpdate();
-    }
-}
     
 
     
@@ -342,7 +334,7 @@ private void showDetailReview(String reviewId) {
 
             },
             new String [] {
-                "ID", "GAME LISTING", "REVIEWER", "RATING", "KOMENTAR"
+                "ID", "GAME ", "REVIEWER", "RATING", "KOMENTAR"
             }
         ) {
             Class[] types = new Class [] {
