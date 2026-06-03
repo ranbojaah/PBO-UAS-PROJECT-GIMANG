@@ -119,17 +119,19 @@ private Reviewimpl reviewImpl = new Reviewimpl();
     }
 }
     
-    public void loadReview() {
+  public void loadReview() {
     try {
         List<Review> data;
-        String role = currentUser.getRole();
+        String role = currentUser.getRole(); // Mengambil role pengguna
 
         if (role.equalsIgnoreCase("admin")) {
             data = reviewImpl.getAll(); 
+        } else if (role.equalsIgnoreCase("seller")) {
+            // Memanggil metode untuk Seller
+            data = reviewImpl.getBySeller(currentUser.getIdUser()); 
         } else {
-            // JIKA BUYER: Panggil getByBuyer (Atau sesuaikan nama method pembeli di Interfc/Impl kamu)
-            // Menggunakan ID User awgaming (U002) untuk mencari r.reviewer_id
-            data = reviewImpl.getByBuyer(currentUser.getIdUser() + ""); 
+            // Diasumsikan role lain adalah "buyer"
+            data = reviewImpl.getByBuyer(currentUser.getIdUser()); 
         }
 
         fillTable(data);
@@ -142,7 +144,6 @@ private Reviewimpl reviewImpl = new Reviewimpl();
                 JOptionPane.ERROR_MESSAGE);
     }
 }
-    
     private void fillTable(List<Review> data) {
         DefaultTableModel model = new DefaultTableModel();
     

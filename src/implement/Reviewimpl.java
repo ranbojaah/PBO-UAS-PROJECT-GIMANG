@@ -153,24 +153,26 @@ public class Reviewimpl implements ReviewInterfc {
         return list;
     }
     
-    @Override
-    public List<Review> getBySeller(String sellerId) throws SQLException {
-        String sql = baseQuery() 
-                   + " WHERE l.seller_id = ?" 
-                   + " ORDER BY r.review_date DESC";
+@Override
+public List<Review> getBySeller(String sellerId) throws SQLException {
+    // Query ini sudah benar karena melakukan JOIN dari reviews ke transactions, 
+    // lalu ke listings untuk memfilter berdasarkan seller_id
+    String sql = baseQuery() 
+                 + " WHERE l.seller_id = ?" 
+                 + " ORDER BY r.review_date DESC";
 
-        PreparedStatement st = Koneksi.getConnection().prepareStatement(sql);
-        st.setString(1, sellerId);
+    PreparedStatement st = Koneksi.getConnection().prepareStatement(sql);
+    st.setString(1, sellerId);
 
-        ResultSet rs = st.executeQuery();
-        List<Review> list = new ArrayList<>();
+    ResultSet rs = st.executeQuery();
+    List<Review> list = new ArrayList<>();
 
-        while (rs.next()) {
-            list.add(mapResultSet(rs));
-        }
-
-        return list;
+    while (rs.next()) {
+        list.add(mapResultSet(rs));
     }
+
+    return list;
+}
     
     @Override
     public List<Review> search(String keyword) throws SQLException {
@@ -290,7 +292,7 @@ public class Reviewimpl implements ReviewInterfc {
             sql.append("""
                        AND (
                            r.review_id LIKE ?
-                           OR g.title LIKE ?
+                              OR g.title LIKE ?
                            OR u.username LIKE ?
                            OR r.comment LIKE ?
                        )

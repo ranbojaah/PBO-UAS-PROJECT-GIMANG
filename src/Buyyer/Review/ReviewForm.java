@@ -4,7 +4,14 @@
  */
 package Buyyer.Review;
 import Admin.Transaksi.TransaksiView;
+import Connection.Koneksi;
+import java.sql.Connection;
+import java.sql.SQLException;
 import entity.user;
+import java.time.LocalDate;
+import javax.swing.JOptionPane;
+import java.sql.PreparedStatement;
+
 
 /**
  *
@@ -19,17 +26,38 @@ public class ReviewForm extends javax.swing.JFrame {
     /**
      * Creates new form ReviewForm
      */
-    public ReviewForm(user usr, TransaksiView parent, String transactionId) {
-        initComponents();
-        this.currentUser = usr;
-        this.parentView = parent;
-        this.transactionId = transactionId;
-        
-        this.setLocationRelativeTo(null); 
-        this.setTitle("Form Review Transaksi - " + this.transactionId);
+  public ReviewForm(user usr, TransaksiView parent, String transactionId, String namaGame) {
+    initComponents();
+    this.currentUser = usr;
+    this.parentView = parent;
+    this.transactionId = transactionId;
+    
+    // Set teks ke komponen UI
+    this.idtransaksi.setText(transactionId);
+    this.idtransaksi.setEditable(false); 
+    this.namagame.setText(namaGame);
+    
+    this.setLocationRelativeTo(null); 
+    this.setTitle("Form Review Transaksi - " + this.transactionId);
+  }
 
+  
+  private String getNextReviewId() {
+        String nextId = "R001";
+        try {
+            java.sql.Connection conn = Koneksi.getConnection();
+            java.sql.Statement st = conn.createStatement();
+            java.sql.ResultSet rs = st.executeQuery("SELECT MAX(CAST(SUBSTRING(review_id, 2) AS UNSIGNED)) as max_id FROM reviews");
+            
+            if (rs.next()) {
+                int max = rs.getInt("max_id");
+                nextId = String.format("R%03d", max + 1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return nextId;
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -39,21 +67,318 @@ public class ReviewForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        namagame = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        idtransaksi = new javax.swing.JTextField();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        ratingtxt = new javax.swing.JTextField();
+        jPanel8 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        btReview = new javax.swing.JButton();
+        btBatal = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        comment = new javax.swing.JTextArea();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+        jPanel1.setBackground(new java.awt.Color(18, 18, 28));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(73, 69, 82)));
+
+        jPanel2.setBackground(new java.awt.Color(27, 27, 37));
+
+        jLabel1.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(206, 189, 255));
+        jLabel1.setText("Review");
+
+        jLabel2.setFont(new java.awt.Font("Verdana", 1, 13)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(202, 196, 212));
+        jLabel2.setText("Input Review");
+
+        jLabel4.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(202, 196, 212));
+        jLabel4.setText("Game :");
+
+        namagame.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        namagame.setForeground(new java.awt.Color(202, 196, 212));
+        namagame.setText("-");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(37, 37, 37)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(namagame, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(27, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(namagame))
+                .addContainerGap())
         );
+
+        jPanel4.setBackground(new java.awt.Color(18, 18, 28));
+
+        jLabel3.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(202, 196, 212));
+        jLabel3.setText("ID Transaksi");
+
+        idtransaksi.setBackground(new java.awt.Color(32, 32, 41));
+        idtransaksi.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        idtransaksi.setForeground(new java.awt.Color(202, 196, 212));
+        idtransaksi.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(111, 108, 120)));
+        idtransaksi.addActionListener(this::idtransaksiActionPerformed);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(38, 38, 38)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(idtransaksi, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+                        .addGap(169, 169, 169))))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(idtransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel6.setBackground(new java.awt.Color(18, 18, 28));
+
+        jLabel9.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(202, 196, 212));
+        jLabel9.setText("Rating (1-5)");
+
+        ratingtxt.setBackground(new java.awt.Color(32, 32, 41));
+        ratingtxt.setForeground(new java.awt.Color(202, 196, 212));
+        ratingtxt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(111, 108, 120)));
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(38, 38, 38)
+                .addComponent(ratingtxt, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                .addGap(320, 320, 320))
+            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel6Layout.createSequentialGroup()
+                    .addGap(37, 37, 37)
+                    .addComponent(jLabel9)
+                    .addContainerGap(358, Short.MAX_VALUE)))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap(31, Short.MAX_VALUE)
+                .addComponent(ratingtxt, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel6Layout.createSequentialGroup()
+                    .addGap(5, 5, 5)
+                    .addComponent(jLabel9)
+                    .addContainerGap(45, Short.MAX_VALUE)))
+        );
+
+        jPanel8.setBackground(new java.awt.Color(18, 18, 28));
+
+        jPanel3.setBackground(new java.awt.Color(27, 27, 37));
+
+        btReview.setBackground(new java.awt.Color(167, 139, 250));
+        btReview.setFont(new java.awt.Font("Verdana", 1, 13)); // NOI18N
+        btReview.setForeground(new java.awt.Color(60, 25, 137));
+        btReview.setText("Catat Review");
+        btReview.setBorder(null);
+        btReview.addActionListener(this::btReviewActionPerformed);
+
+        btBatal.setBackground(new java.awt.Color(147, 0, 10));
+        btBatal.setFont(new java.awt.Font("Verdana", 1, 13)); // NOI18N
+        btBatal.setForeground(new java.awt.Color(255, 218, 214));
+        btBatal.setText("Batal");
+        btBatal.setBorder(null);
+        btBatal.addActionListener(this::btBatalActionPerformed);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btReview, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btReview, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(23, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jLabel10.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(202, 196, 212));
+        jLabel10.setText("Komentar");
+
+        jScrollPane1.setBorder(null);
+
+        comment.setBackground(new java.awt.Color(32, 32, 41));
+        comment.setColumns(20);
+        comment.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        comment.setForeground(new java.awt.Color(202, 196, 212));
+        comment.setRows(5);
+        comment.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(111, 108, 120)));
+        jScrollPane1.setViewportView(comment);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(38, 38, 38)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
+                    .addComponent(jLabel10))
+                .addGap(37, 37, 37))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btBatalActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_btBatalActionPerformed
+
+    private void btReviewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btReviewActionPerformed
+        // TODO add your handling code here:
+    String transactionId = this.transactionId;
+    String reviewerId = currentUser.getIdUser(); // Mengambil ID dari objek user
+    String ratingStr = ratingtxt.getText();
+    String komentar = comment.getText();
+    String tanggalReview = LocalDate.now().toString();
+    
+    
+    String newId = getNextReviewId();
+    
+    // 2. Validasi input sederhana
+    if (ratingStr.isEmpty() || komentar.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Rating dan komentar harus diisi!");
+        return;
+    }
+
+    try {
+        int rating = Integer.parseInt(ratingStr);
+        if (rating < 1 || rating > 5) {
+            JOptionPane.showMessageDialog(this, "Rating harus antara 1-5!");
+            return;
+        }
+
+        // 3. Query SQL untuk INSERT
+        // Sesuaikan nama kolom dengan struktur tabel 'reviews' Anda
+        String sql = "INSERT INTO reviews (review_id, transaction_id, reviewer_id, rating, comment, review_date) VALUES (?, ?, ?, ?, ?, ?)";
+        
+        // Asumsi Anda punya metode untuk mendapatkan koneksi, contoh: Koneksi.getConnection()
+        Connection conn = (Connection) Koneksi.getConnection(); 
+        PreparedStatement pst = conn.prepareStatement(sql);
+        
+        pst.setString(1, newId);          
+        pst.setString(2, transactionId);
+        pst.setString(3, reviewerId);
+        pst.setInt(4, rating);
+        pst.setString(5, komentar);
+        pst.setString(6, tanggalReview);
+        
+        // 4. Eksekusi
+        pst.executeUpdate();
+        JOptionPane.showMessageDialog(this, "Review berhasil disimpan!");
+        
+        // Tutup form setelah berhasil
+        this.dispose();
+        
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Rating harus berupa angka!");
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Gagal menyimpan review: " + e.getMessage());
+        logger.log(java.util.logging.Level.SEVERE, "Error saat simpan review", e);
+    }
+
+    }//GEN-LAST:event_btReviewActionPerformed
+
+    private void idtransaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idtransaksiActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_idtransaksiActionPerformed
 
     /**
      * @param args the command line arguments
@@ -61,5 +386,25 @@ public class ReviewForm extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btBatal;
+    private javax.swing.JButton btReview;
+    private javax.swing.JTextArea comment;
+    private javax.swing.JTextField idtransaksi;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel namagame;
+    private javax.swing.JTextField ratingtxt;
     // End of variables declaration//GEN-END:variables
 }

@@ -760,6 +760,7 @@ public class TransaksiView extends javax.swing.JFrame {
         }
 
         String idTransaksi = tbTransaksi.getValueAt(selectedRow, 0).toString();
+        String namaGame = jLabel6.getText();
 
         try {
             ReviewInterfc reviewImpl = new Reviewimpl();
@@ -770,7 +771,7 @@ public class TransaksiView extends javax.swing.JFrame {
                 return; 
             }
 
-            ReviewForm formReview = new ReviewForm(currentUser, this, idTransaksi);
+            ReviewForm formReview = new ReviewForm(currentUser, this, idTransaksi,namaGame);
             formReview.setVisible(true);
 
         } catch (java.sql.SQLException e) {
