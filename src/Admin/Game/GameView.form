@@ -61,9 +61,11 @@
                   <Component id="lblTotalGame" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
                   <Component id="txtCari" min="-2" pref="297" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
+                  <EmptySpace pref="102" max="32767" attributes="0"/>
+                  <Component id="btDashboard" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btnTambah" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
                   <Component id="btnEdit" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btnHapus" min="-2" max="-2" attributes="0"/>
@@ -88,6 +90,7 @@
                               <Component id="txtCari" alignment="3" max="32767" attributes="0"/>
                               <Component id="btnTambah" alignment="3" max="32767" attributes="0"/>
                               <Component id="btnEdit" alignment="3" max="32767" attributes="0"/>
+                              <Component id="btDashboard" alignment="3" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -192,6 +195,23 @@
             <Property name="text" type="java.lang.String" value="0 Game Tercatat"/>
           </Properties>
         </Component>
+        <Component class="javax.swing.JButton" name="btDashboard">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="bd" red="ce" type="rgb"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Verdana" size="16" style="1"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="85" green="13" red="38" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Dashboard"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btDashboardActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
@@ -251,6 +271,9 @@
               <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblGameMouseClicked"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -280,7 +303,7 @@
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="lblDev" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="126" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                                   <Component id="lblDetDeveloper" min="-2" pref="161" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
