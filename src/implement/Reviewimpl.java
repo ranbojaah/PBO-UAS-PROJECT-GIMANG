@@ -19,14 +19,12 @@ public class Reviewimpl implements ReviewInterfc {
         Review r = new Review();
 
         r.setReviewId(rs.getString("review_id"));
-        // PERBAIKAN: Menggunakan setTransactionId sesuai dengan entity Review yang baru
         r.setTransactionId(rs.getString("transaction_id")); 
         r.setReviewerId(rs.getString("reviewer_id"));
         r.setRating(rs.getInt("rating"));
         r.setComment(rs.getString("comment"));
         r.setReviewDate(rs.getDate("review_date"));
 
-        // Atribut hasil JOIN
         r.setGameTitle(rs.getString("game_title"));
         r.setReviewerUsername(rs.getString("reviewer_username"));
 
@@ -63,7 +61,6 @@ public class Reviewimpl implements ReviewInterfc {
         PreparedStatement st = Koneksi.getConnection().prepareStatement(sql);
 
         st.setString(1, o.createIdReview());
-        // PERBAIKAN: Menggunakan getTransactionId() bukan getListingId()
         st.setString(2, o.getTransactionId()); 
         st.setString(3, o.getReviewerId());
         st.setInt(4, o.getRating());

@@ -25,11 +25,9 @@ public class ReviewForm extends javax.swing.JFrame {
         this.parentView = parent;
         this.transactionId = transactionId;
         
-        this.setLocationRelativeTo(null); // Membuat form muncul di tengah layar
+        this.setLocationRelativeTo(null); 
         this.setTitle("Form Review Transaksi - " + this.transactionId);
-        
-        // Di sini Anda bisa memanfaatkan variabel 'transactionId' untuk set text ke JLabel, 
-        // atau menyimpannya nanti saat tombol 'Simpan/Submit Review' diklik.
+
     }
 
     /**

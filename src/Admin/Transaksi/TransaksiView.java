@@ -754,32 +754,28 @@ public class TransaksiView extends javax.swing.JFrame {
     
     private void btReviewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btReviewActionPerformed
        int selectedRow = tbTransaksi.getSelectedRow();
-    if (selectedRow == -1) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Pilih baris transaksi di tabel yang ingin di-review terlebih dahulu!", "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    // 2. Mengambil ID Transaksi langsung dari baris tabel (Kolom indeks 0)
-    String idTransaksi = tbTransaksi.getValueAt(selectedRow, 0).toString();
-
-    try {
-        // 3. Validasi status ke database lewat kelas Implementasi
-        ReviewInterfc reviewImpl = new Reviewimpl();
-        java.util.List<Review> listReview = reviewImpl.getByTransaction(idTransaksi);
-        
-        // Jika data review untuk transaksi tersebut sudah ditemukan di DB
-        if (!listReview.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Transaksi ini sudah di-review!", "Informasi", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            return; // Berhenti, jangan panggil Form
+        if (selectedRow == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih baris transaksi di tabel yang ingin di-review terlebih dahulu!", "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
         }
 
-        // 4. Buka ReviewForm jika validasi lolos dengan mengirim data (currentUser, view saat ini, dan idTransaksi)
-        ReviewForm formReview = new ReviewForm(currentUser, this, idTransaksi);
-        formReview.setVisible(true);
+        String idTransaksi = tbTransaksi.getValueAt(selectedRow, 0).toString();
 
-    } catch (java.sql.SQLException e) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memeriksa status review: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-    }
+        try {
+            ReviewInterfc reviewImpl = new Reviewimpl();
+            java.util.List<Review> listReview = reviewImpl.getByTransaction(idTransaksi);
+
+            if (!listReview.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Transaksi ini sudah di-review!", "Informasi", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                return; 
+            }
+
+            ReviewForm formReview = new ReviewForm(currentUser, this, idTransaksi);
+            formReview.setVisible(true);
+
+        } catch (java.sql.SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memeriksa status review: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btReviewActionPerformed
 
     /**

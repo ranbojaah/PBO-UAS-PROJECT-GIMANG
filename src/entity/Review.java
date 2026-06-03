@@ -16,15 +16,14 @@ import java.sql.Date;
  */
 public class Review {
     private String review_id;
-    private String transaction_id; // UBAH: Dari listing_id menjadi transaction_id
+    private String transaction_id; 
     private String reviewer_id;
     private int rating;
     private String comment;
     private Date review_date;
 
-    // Tambahan atribut untuk menampung hasil JOIN saat ditampilkan di JTable
-    private String game_title;       // Diambil dari tabel games melalui join transaction -> listing -> games
-    private String reviewer_username; // Diambil dari tabel users/accounts berdasarkan reviewer_id
+    private String game_title;       
+    private String reviewer_username; 
 
     public String getReviewId() {
         return review_id;
@@ -34,12 +33,10 @@ public class Review {
         this.review_id = review_id;
     }
 
-    // UBAH: Getter untuk transaction_id
     public String getTransactionId() {
         return transaction_id;
     }
 
-    // UBAH: Setter untuk transaction_id
     public void setTransactionId(String transaction_id) {
         this.transaction_id = transaction_id;
     }
