@@ -119,12 +119,19 @@ public class TransaksiView extends javax.swing.JFrame {
                     String gameTitle   = tbTransaksi.getValueAt(selectedRow, 1).toString();
                     String buyerName   = tbTransaksi.getValueAt(selectedRow, 2).toString();
                     String totalHarga  = tbTransaksi.getValueAt(selectedRow, 3).toString();
+                    String status      = tbTransaksi.getValueAt(selectedRow, 5).toString();
 
                     // Set text ke komponen detail
                     jLabel4.setText("Detail - " + idTransaksi);
                     jLabel6.setText(gameTitle);
                     jLabel11.setText(buyerName);
-
+                    
+                if (currentUser != null && currentUser.getRole().equalsIgnoreCase("buyer") && status.equalsIgnoreCase("selesai")) {
+                    btReview.setVisible(true);
+                } else {
+                    btReview.setVisible(false);
+                }
+                    
                     // PANGGIL METHOD DARI INTERFACE SECARA DINAMIS
                     try {
                         String namaSeller = transImpl.getSellerNameByTransactionId(idTransaksi);

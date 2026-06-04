@@ -10,6 +10,14 @@ import entity.user;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.swing.table.DefaultTableModel;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 
 /**
  *
@@ -26,6 +34,7 @@ public class GameView extends javax.swing.JFrame {
     public GameView(user usr) {
         this.currentUser = usr;
         initComponents();
+        styleTable();
         this.setLocationRelativeTo(null);
         checkUserRole();
         load_table();
@@ -37,11 +46,74 @@ public class GameView extends javax.swing.JFrame {
         lblDetTahun.setText("-");
     }
     
+    private void styleTable() {
+        // 1. Atur tinggi baris tabel agar lebih renggang dan modern
+        tblGame.setRowHeight(48);
+
+        // 2. Atur warna background dan foreground (teks) body tabel
+        tblGame.setBackground(new Color(10, 10, 20));
+        tblGame.setForeground(Color.WHITE);
+
+        // 3. Atur warna saat baris dipilih (selected)
+        tblGame.setSelectionBackground(new Color(24, 24, 32));
+        tblGame.setSelectionForeground(Color.WHITE);
+
+        // 4. Atur warna garis grid (jika grid dinyalakan)
+        tblGame.setGridColor(new Color(30, 30, 40));
+        tblGame.setShowGrid(false); // Menyembunyikan garis default agar terlihat clean
+
+        // 5. Menghilangkan spacing antar cell default
+        tblGame.setIntercellSpacing(new Dimension(0, 0));
+
+        // 6. Kustomisasi Header Tabel
+        JTableHeader header = tblGame.getTableHeader();
+        header.setOpaque(false);
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, 
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                // Background & Teks Header (Abu-abu gelap keunguan)
+                lbl.setBackground(new Color(24, 24, 32));
+                lbl.setForeground(new Color(180, 180, 200));
+
+                // Berikan border tipis di bawah header dan padding (top, left, bottom, right)
+                lbl.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createMatteBorder(0, 0, 1, 1, new Color(45, 45, 60)),
+                    BorderFactory.createEmptyBorder(12, 12, 12, 12)
+                ));
+
+                return lbl;
+            }
+        });
+
+        // 7. Kustomisasi Cell Body (Menambahkan padding agar teks tidak mentok ke garis)
+        DefaultTableCellRenderer bodyRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, 
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                // Memberikan padding/jarak aman di dalam cell body
+                lbl.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+
+                return lbl;
+            }
+        };
+
+        // Terapkan renderer body ke semua kolom yang ada di tblGame
+        for (int i = 0; i < tblGame.getColumnCount(); i++) {
+            tblGame.getColumnModel().getColumn(i).setCellRenderer(bodyRenderer);
+        }
+    }
+    
     private void checkUserRole() {
         // 1. Validasi jika objek user kosong/null demi keamanan aplikasi
         if (currentUser == null || currentUser.getRole() == null) {
             btnTambah.setVisible(false);
-            btnEdit.setVisible(false);
             btnHapus.setVisible(false);
             return;
         }
@@ -49,12 +121,10 @@ public class GameView extends javax.swing.JFrame {
         // 2. Periksa apakah role bernilai "admin" (tidak sensitif huruf besar/kecil)
         if (currentUser.getRole().equalsIgnoreCase("admin")) {
             btnTambah.setVisible(true);
-            btnEdit.setVisible(true);
             btnHapus.setVisible(true);
         } else {
             // Jika bukan admin (misal: user biasa), sembunyikan semua tombol aksi manajemen game
             btnTambah.setVisible(false);
-            btnEdit.setVisible(false);
             btnHapus.setVisible(false);
         }
     }
@@ -135,7 +205,6 @@ public class GameView extends javax.swing.JFrame {
         txtCari = new javax.swing.JTextField();
         btnHapus = new javax.swing.JButton();
         btnTambah = new javax.swing.JButton();
-        btnEdit = new javax.swing.JButton();
         lblSeparator = new javax.swing.JLabel();
         lblTotalGame = new javax.swing.JLabel();
         btDashboard = new javax.swing.JButton();
@@ -176,12 +245,6 @@ public class GameView extends javax.swing.JFrame {
         btnTambah.setText("+ Tambah Game");
         btnTambah.addActionListener(this::btnTambahActionPerformed);
 
-        btnEdit.setBackground(new java.awt.Color(27, 27, 37));
-        btnEdit.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
-        btnEdit.setForeground(new java.awt.Color(206, 189, 255));
-        btnEdit.setText("Edit");
-        btnEdit.addActionListener(this::btnEditActionPerformed);
-
         lblSeparator.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
         lblSeparator.setForeground(new java.awt.Color(139, 128, 173));
         lblSeparator.setText("|");
@@ -214,9 +277,7 @@ public class GameView extends javax.swing.JFrame {
                 .addComponent(btDashboard)
                 .addGap(18, 18, 18)
                 .addComponent(btnTambah)
-                .addGap(47, 47, 47)
-                .addComponent(btnEdit)
-                .addGap(18, 18, 18)
+                .addGap(137, 137, 137)
                 .addComponent(btnHapus)
                 .addGap(18, 18, 18))
         );
@@ -235,7 +296,6 @@ public class GameView extends javax.swing.JFrame {
                             .addComponent(btnHapus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtCari)
                             .addComponent(btnTambah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
@@ -492,7 +552,6 @@ public class GameView extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btDashboard;
-    private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnTambah;
     private javax.swing.JPanel jPanel1;

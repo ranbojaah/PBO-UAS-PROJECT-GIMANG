@@ -106,6 +106,8 @@ private Reviewimpl reviewImpl = new Reviewimpl();
       
        private void setupRole() {
     String role = currentUser.getRole();
+    
+    
 
     if (role.equalsIgnoreCase("admin")) {
         // Admin bisa melihat dan menggunakan semua tombol moderasi
