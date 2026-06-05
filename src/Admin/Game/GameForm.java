@@ -424,7 +424,7 @@ public class GameForm extends javax.swing.JFrame {
 
             // 4. Callback otomatis untuk memicu refresh data tabel di GameView
             if (parentView != null) {
-                parentView.load_table();
+                parentView.load_table("");
             }
 
             // 5. Tutup pop-up dialog form

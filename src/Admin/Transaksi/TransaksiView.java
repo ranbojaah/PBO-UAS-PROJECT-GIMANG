@@ -153,110 +153,72 @@ public class TransaksiView extends javax.swing.JFrame {
         });
     }
     
-    private void styleTable(){
+    private void styleTable() {
         tbTransaksi.setRowHeight(48);
-
-        tbTransaksi.setBackground(new Color(10,10,20));
+        tbTransaksi.setBackground(new Color(10, 10, 20));
         tbTransaksi.setForeground(Color.WHITE);
-
-        tbTransaksi.setSelectionBackground(new Color(24,24,32));
+        tbTransaksi.setSelectionBackground(new Color(24, 24, 32));
         tbTransaksi.setSelectionForeground(Color.WHITE);
-
-        tbTransaksi.setGridColor(new Color(30,30,40));
-
+        tbTransaksi.setGridColor(new Color(30, 30, 40));
         tbTransaksi.setShowGrid(false);
+        tbTransaksi.setIntercellSpacing(new Dimension(0, 0));
 
-        tbTransaksi.setIntercellSpacing(
-                new Dimension(0,0));
-
+        // Styling Header
         JTableHeader header = tbTransaksi.getTableHeader();
-
         header.setOpaque(false);
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                lbl.setBackground(new Color(24, 24, 32));
+                lbl.setForeground(new Color(180, 180, 200));
+                lbl.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createMatteBorder(0, 0, 1, 1, new Color(45, 45, 60)),
+                        BorderFactory.createEmptyBorder(12, 12, 12, 12)
+                ));
+                return lbl;
+            }
+        });
 
-        header.setDefaultRenderer(
-            new DefaultTableCellRenderer(){
+        DefaultTableCellRenderer bodyRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                lbl.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+                return lbl;
+            }
+            
+        };
 
-                @Override
-                public Component getTableCellRendererComponent(
-                        JTable table,
-                        Object value,
-                        boolean isSelected,
-                        boolean hasFocus,
-                        int row,
-                        int column){
+        DefaultTableCellRenderer statusRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                lbl.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-                    JLabel lbl =
-                        (JLabel) super.getTableCellRendererComponent(
-                            table,
-                            value,
-                            isSelected,
-                            hasFocus,
-                            row,
-                            column);
-
-                    lbl.setBackground(
-                        new Color(24,24,32));
-
-                    lbl.setForeground(
-                        new Color(180,180,200));
-
-                    lbl.setBorder(
-                        BorderFactory.createCompoundBorder(
-
-                            BorderFactory.createMatteBorder(
-                                0,0,1,1,
-                                new Color(45,45,60)
-                            ),
-
-                            BorderFactory.createEmptyBorder(
-                                12,12,12,12
-                            )
-                        )
-                    );
-
-                    return lbl;
+                String status = value != null ? value.toString().toLowerCase() : "";
+                if (status.equals("selesai")) {
+                    lbl.setForeground(new Color(60, 221, 199)); 
+                } else if (status.equals("pending")) {
+                    lbl.setForeground(new Color(251, 191, 36)); 
+                } else if (status.equals("proses")) {
+                    lbl.setForeground(new Color(167, 139, 250)); 
+                } else {
+                    lbl.setForeground(Color.RED);
                 }
-            });
-        
-        DefaultTableCellRenderer bodyRenderer =
-            new DefaultTableCellRenderer(){
+                return lbl;
+            }
+        };
 
-                @Override
-                public Component getTableCellRendererComponent(
-                        JTable table,
-                        Object value,
-                        boolean isSelected,
-                        boolean hasFocus,
-                        int row,
-                        int column){
-
-                    JLabel lbl =
-                        (JLabel) super.getTableCellRendererComponent(
-                            table,
-                            value,
-                            isSelected,
-                            hasFocus,
-                            row,
-                            column);
-
-                    lbl.setBorder(
-                        BorderFactory.createEmptyBorder(
-                            12,12,12,12
-                        )
-                    );
-
-                    return lbl;
-                }
-            };
-
-        for(int i=0; i<tbTransaksi.getColumnCount(); i++){
-            tbTransaksi.getColumnModel()
-                .getColumn(i)
-                .setCellRenderer(bodyRenderer);
+        // Terapkan renderer ke kolom
+        for (int i = 0; i < tbTransaksi.getColumnCount(); i++) {
+            if (i == 5) { // Index 5 adalah kolom STATUS
+                tbTransaksi.getColumnModel().getColumn(i).setCellRenderer(statusRenderer);
+            } else {
+                tbTransaksi.getColumnModel().getColumn(i).setCellRenderer(bodyRenderer);
+            }
         }
     }
-   
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

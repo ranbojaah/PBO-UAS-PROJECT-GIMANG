@@ -37,13 +37,21 @@ public class GameView extends javax.swing.JFrame {
         styleTable();
         this.setLocationRelativeTo(null);
         checkUserRole();
-        load_table();
+        load_table("");
         
         lblDetailJudul.setText("Detail - Pilih Game");
         lblDetDeveloper.setText("-");
         lblDetGenre.setText("-");
         lblDetPlatform.setText("-");
         lblDetTahun.setText("-");
+        
+        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
+        @Override
+        public void keyReleased(java.awt.event.KeyEvent evt) {
+                load_table(txtCari.getText());
+            }
+        });
+        
     }
     
     private void styleTable() {
@@ -129,7 +137,7 @@ public class GameView extends javax.swing.JFrame {
         }
     }
 
-    public void load_table() {
+   public void load_table(String keyword) {
         // 1. Membuat struktur kolom tabel (Non-editable cell)
         DefaultTableModel model = new DefaultTableModel() {
             @Override
@@ -143,29 +151,42 @@ public class GameView extends javax.swing.JFrame {
         model.addColumn("Platform");
         model.addColumn("Tahun");
 
-        // 2. Menarik data dari database menggunakan JOIN agar genre terbaca
+        // 2. Menarik data dari database menggunakan JOIN dan penambahan Filter SEARCH
         try {
-            // Query disesuaikan dengan skema tabel asli db_uas_pbo milikmu
             String sql = "SELECT g.game_id, g.title, g.platform, g.release_year, " +
                     "GROUP_CONCAT(gr.name SEPARATOR ', ') AS nama_genre " +
                     "FROM games g " +
                     "LEFT JOIN gamegenre gg ON g.game_id = gg.game_id " +
                     "LEFT JOIN genres gr ON gg.genre_id = gr.id " +
-                    "WHERE g.is_delete = FALSE " +
-                    "GROUP BY g.game_id " +
-                    "ORDER BY g.game_id ASC";
+                    "WHERE g.is_delete = FALSE ";
+
+            // Jika keyword tidak kosong, tambahkan kondisi pencarian
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql += "AND (g.title LIKE ? OR g.platform LIKE ? OR g.release_year LIKE ?) ";
+            }
+
+            sql += "GROUP BY g.game_id " +
+                   "ORDER BY g.game_id ASC";
 
             Connection conn = Koneksi.getConnection();
-            java.sql.Statement stm = conn.createStatement();
-            java.sql.ResultSet res = stm.executeQuery(sql);
+            java.sql.PreparedStatement stm = conn.prepareStatement(sql);
 
+            // Isi parameter PreparedStatement jika keyword ada
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword + "%";
+                stm.setString(1, searchPattern);
+                stm.setString(2, searchPattern);
+                stm.setString(3, searchPattern);
+            }
+
+            java.sql.ResultSet res = stm.executeQuery();
             int totalGame = 0;
 
             // 3. Looping data hasil query masuk ke dalam model tabel
             while (res.next()) {
                 String genre = res.getString("nama_genre");
                 if (genre == null || genre.isEmpty()) {
-                    genre = "-"; // Antisipasi jika game belum diberi genre
+                    genre = "-"; 
                 }
 
                 model.addRow(new Object[] {
@@ -184,12 +205,19 @@ public class GameView extends javax.swing.JFrame {
             // 5. Perbarui komponen label total data game
             lblTotalGame.setText(totalGame + " Game Tercatat");
 
+            // Aplikasikan ulang custom body renderer karena model baru saja diganti
+            for (int i = 0; i < tblGame.getColumnCount(); i++) {
+                tblGame.getColumnModel().getColumn(i).setCellRenderer(tblGame.getColumnModel().getColumn(0).getCellRenderer());
+            }
+
+            res.close();
+            stm.close();
+
         } catch (SQLException e) {
             System.err.println("Gagal memuat data tabel: " + e.getMessage());
             javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
         }
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -232,7 +260,11 @@ public class GameView extends javax.swing.JFrame {
         lblGame.setForeground(new java.awt.Color(139, 128, 173));
         lblGame.setText("Semua Game");
 
-        txtCari.addActionListener(this::txtCariActionPerformed);
+        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCariKeyReleased(evt);
+            }
+        });
 
         btnHapus.setBackground(new java.awt.Color(27, 27, 37));
         btnHapus.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
@@ -489,6 +521,11 @@ public class GameView extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_tblGameMouseClicked
 
+    private void txtCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyReleased
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_txtCariKeyReleased
+
     private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtCariActionPerformed
         // TODO add your handling code here:
     }// GEN-LAST:event_txtCariActionPerformed
@@ -525,7 +562,7 @@ public class GameView extends javax.swing.JFrame {
 
                 if (hasil > 0) {
                     javax.swing.JOptionPane.showMessageDialog(this, "Game berhasil dihapus!");
-                    load_table(); // Refresh tabel agar game hilang dari tampilan
+                    load_table(""); // Refresh tabel agar game hilang dari tampilan
                 }
 
                 st.close();
