@@ -12,6 +12,7 @@ import java.util.List;
  * @author Bintang K
  */
 public interface UserInterfc {
+    boolean resetPassword(String email, String fullname, String passwordBaru) throws SQLException;
     user register (user o) throws SQLException;
     user login(String username, String password) throws SQLException;
     user getById(String user_id) throws SQLException;

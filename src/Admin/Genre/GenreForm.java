@@ -10,6 +10,7 @@ import interfc.GenreInterfc;
 import implement.GenreImpl;
 import javax.swing.JOptionPane;
 import java.sql.SQLException;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -34,6 +35,23 @@ public class GenreForm extends javax.swing.JFrame {
         this.currentUser = currentUser;
         this.genreView = parentView;
         this.isEditMode = false;
+        setIconImage(new ImageIcon(getClass().getResource("/asset/gamecnh.png")).getImage());
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                int jawaban = JOptionPane.showConfirmDialog(
+                    null,
+                    "Yakin ingin menutup aplikasi?",
+                    "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                if (jawaban == JOptionPane.YES_OPTION) {
+                    dispose();
+                }
+            }
+        });
         
         lbJudulForm.setText("Tambah Genre Baru");
         prepareAutoId(); // Generate ID otomatis saat form dibuka

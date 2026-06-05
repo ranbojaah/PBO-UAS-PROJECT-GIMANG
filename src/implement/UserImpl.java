@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import Connection.Koneksi;
+import at.favre.lib.crypto.bcrypt.BCrypt;
 /**
  *
  * @author Bintang K
@@ -28,13 +29,15 @@ public class UserImpl implements UserInterfc{
         if (rs.getInt(1) > 0) {
             throw new SQLException("Username sudah digunakan, coba username lain.");
         }
+        String hashed = BCrypt.withDefaults().hashToString(12, o.getpassword().toCharArray());
+
         
         PreparedStatement st = Koneksi.getConnection().prepareStatement("insert into users values(?,?,?,?,?,?,NOW(),NOw())");
         st.setString(1, o.createIdUser());
         st.setString(2, o.getUsername());
         st.setString(3, o.getFullname());
         st.setString(4, o.getEmail());
-        st.setString(5, o.getpassword());
+        st.setString(5, hashed);
         st.setString(6, o.getRole());
         st.executeUpdate();
         return o;
@@ -85,11 +88,14 @@ public class UserImpl implements UserInterfc{
     @Override
     public user login(String username, String password) throws SQLException {
         PreparedStatement st = Koneksi.getConnection().prepareStatement(
-               "select * from users where username=? and password=?");
+               "select * from users where username=?");
            st.setString(1, username);
-           st.setString(2, password);
            ResultSet rs = st.executeQuery();
            if (rs.next()) {
+               String hashedPassword = rs.getString("password");
+               BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), hashedPassword);
+               if(result.verified) {
+                   
                user usr = new user();
                usr.setIdUser(rs.getString("user_id"));
                usr.setUsername(rs.getString("username"));
@@ -97,6 +103,7 @@ public class UserImpl implements UserInterfc{
                usr.setEmail(rs.getString("email"));
                usr.setRole(rs.getString("role"));
                return usr;
+               }
            }
            return null;
     }
@@ -118,5 +125,27 @@ public class UserImpl implements UserInterfc{
             }
             return null;
     }
+
+
+    @Override
+    public boolean resetPassword(String email, String fullname, String passwordBaru) throws SQLException {
+        PreparedStatement cek = Koneksi.getConnection().prepareStatement(
+        "select count(*) from users where email=? and full_name=?");
+        cek.setString(1, email);
+        cek.setString(2, fullname);
+        ResultSet rs = cek.executeQuery();
+        rs.next();
+        if (rs.getInt(1) == 0) {
+            return false; // email atau fullname tidak cocok
+        }
+        String hashed = BCrypt.withDefaults().hashToString(12, passwordBaru.toCharArray());
+        PreparedStatement update = Koneksi.getConnection().prepareStatement(
+            "update users set password=? where email=?");
+        update.setString(1, hashed);
+        update.setString(2, email);
+        update.executeUpdate();
+        return true;
+    }
+    
     
 }
