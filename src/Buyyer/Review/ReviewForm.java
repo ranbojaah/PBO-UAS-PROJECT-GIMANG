@@ -11,6 +11,7 @@ import entity.user;
 import java.time.LocalDate;
 import javax.swing.JOptionPane;
 import java.sql.PreparedStatement;
+import javax.swing.ImageIcon;
 
 
 /**
@@ -39,6 +40,23 @@ public class ReviewForm extends javax.swing.JFrame {
     
     this.setLocationRelativeTo(null); 
     this.setTitle("Form Review Transaksi - " + this.transactionId);
+    setIconImage(new ImageIcon(getClass().getResource("/asset/gamecnh.png")).getImage());
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                int jawaban = JOptionPane.showConfirmDialog(
+                    null,
+                    "Yakin ingin menutup aplikasi?",
+                    "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                if (jawaban == JOptionPane.YES_OPTION) {
+                    dispose();
+                }
+            }
+        });
   }
 
   

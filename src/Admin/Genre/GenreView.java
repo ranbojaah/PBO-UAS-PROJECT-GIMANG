@@ -12,7 +12,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -38,6 +40,23 @@ public class GenreView extends javax.swing.JFrame {
         styleTable();
         checkUserRole();
         loadData();
+        setIconImage(new ImageIcon(getClass().getResource("/asset/gamecnh.png")).getImage());
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                int jawaban = JOptionPane.showConfirmDialog(
+                    null,
+                    "Yakin ingin menutup aplikasi?",
+                    "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                if (jawaban == JOptionPane.YES_OPTION) {
+                    dispose();
+                }
+            }
+        });
     }
     
     private void checkUserRole() {

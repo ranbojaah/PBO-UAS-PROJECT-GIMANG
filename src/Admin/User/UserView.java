@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import java.sql.SQLException;
 import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -43,6 +44,23 @@ public class UserView extends javax.swing.JFrame {
                 new String[] { "ID User", "Username", "Fullname", "Email", "Role" }));
         loadData("");
         styleTable();
+        setIconImage(new ImageIcon(getClass().getResource("/asset/gamecnh.png")).getImage());
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                int jawaban = JOptionPane.showConfirmDialog(
+                    null,
+                    "Yakin ingin menutup aplikasi?",
+                    "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                if (jawaban == JOptionPane.YES_OPTION) {
+                    dispose();
+                }
+            }
+        });
     }
 
     private void styleTable() {
