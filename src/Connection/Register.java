@@ -213,8 +213,16 @@ public class Register extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Email tidak boleh kosong", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        if(!email.contains("@") && !email.contains(".")) {
+            JOptionPane.showMessageDialog(this, "Format email salah", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         if (pw.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Password tidak boleh kosong", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(pw.length() < 8) {
+            JOptionPane.showMessageDialog(this, "Password tidak boleh kurang dari delapan karakter", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 

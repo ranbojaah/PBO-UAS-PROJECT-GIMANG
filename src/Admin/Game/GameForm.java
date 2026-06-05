@@ -161,6 +161,7 @@ public class GameForm extends javax.swing.JFrame {
         jLabel3.setText("jLabel3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Game Form");
 
         jPanel1.setBackground(new java.awt.Color(48, 48, 46));
 

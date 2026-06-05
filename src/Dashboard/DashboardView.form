@@ -48,7 +48,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace min="50" pref="50" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="lblWelcome" min="-2" pref="250" max="-2" attributes="0"/>
@@ -57,22 +57,22 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="btnGamesView" min="-2" pref="140" max="-2" attributes="0"/>
-                              <Component id="btnReviewsView" min="-2" pref="140" max="-2" attributes="0"/>
+                              <Component id="btnGamesView" max="32767" attributes="0"/>
+                              <Component id="btnReviewsView" pref="140" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="btnGenresView" min="-2" pref="140" max="-2" attributes="0"/>
-                              <Component id="btnTransactView" min="-2" pref="140" max="-2" attributes="0"/>
+                              <Component id="btnGenresView" max="32767" attributes="0"/>
+                              <Component id="btnTransactView" pref="140" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="btnListingsView" min="-2" pref="140" max="-2" attributes="0"/>
-                              <Component id="btnUserView" min="-2" pref="140" max="-2" attributes="0"/>
+                              <Component id="btnListingsView" max="32767" attributes="0"/>
+                              <Component id="btnUserView" pref="140" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace min="50" pref="50" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -86,15 +86,33 @@
                   </Group>
                   <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="btnGamesView" alignment="3" min="-2" pref="130" max="-2" attributes="0"/>
-                      <Component id="btnGenresView" alignment="3" min="-2" pref="130" max="-2" attributes="0"/>
-                      <Component id="btnListingsView" alignment="3" min="-2" pref="130" max="-2" attributes="0"/>
+                      <Group type="102" alignment="3" attributes="0">
+                          <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
+                          <Component id="btnGamesView" pref="130" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="3" attributes="0">
+                          <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
+                          <Component id="btnGenresView" pref="130" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="3" attributes="0">
+                          <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
+                          <Component id="btnListingsView" pref="130" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="btnReviewsView" alignment="3" min="-2" pref="130" max="-2" attributes="0"/>
-                      <Component id="btnTransactView" alignment="3" min="-2" pref="130" max="-2" attributes="0"/>
-                      <Component id="btnUserView" alignment="3" min="-2" pref="130" max="-2" attributes="0"/>
+                      <Group type="102" alignment="3" attributes="0">
+                          <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
+                          <Component id="btnReviewsView" pref="130" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="3" attributes="0">
+                          <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
+                          <Component id="btnTransactView" pref="130" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="3" attributes="0">
+                          <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
+                          <Component id="btnUserView" pref="130" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
               </Group>

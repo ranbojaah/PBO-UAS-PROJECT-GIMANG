@@ -160,6 +160,7 @@ public class GenreView extends javax.swing.JFrame {
         tbGenre = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Genres");
 
         mainPanel.setBackground(new java.awt.Color(41, 41, 52));
 

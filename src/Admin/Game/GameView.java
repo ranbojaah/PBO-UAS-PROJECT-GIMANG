@@ -223,6 +223,7 @@ public class GameView extends javax.swing.JFrame {
         lblDetTahun = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Games");
 
         jPanel1.setBackground(new java.awt.Color(27, 27, 37));
 
