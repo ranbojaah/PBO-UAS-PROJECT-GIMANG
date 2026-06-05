@@ -112,40 +112,6 @@ public class ListingView extends javax.swing.JFrame {
                         return lbl;
                     }
                 });
-
-        DefaultTableCellRenderer bodyRenderer = new DefaultTableCellRenderer() {
-
-            @Override
-            public Component getTableCellRendererComponent(
-                    JTable table,
-                    Object value,
-                    boolean isSelected,
-                    boolean hasFocus,
-                    int row,
-                    int column) {
-
-                JLabel lbl = (JLabel) super.getTableCellRendererComponent(
-                        table,
-                        value,
-                        isSelected,
-                        hasFocus,
-                        row,
-                        column);
-
-                lbl.setBorder(
-                        BorderFactory.createEmptyBorder(
-                                12, 12, 12, 12));
-
-                return lbl;
-            }
-        };
-
-        for (int i = 0; i < tbListing.getColumnCount(); i++) {
-
-            tbListing.getColumnModel()
-                    .getColumn(i)
-                    .setCellRenderer(bodyRenderer);
-        }
     }
 
     private void styleToggleButton() {
@@ -242,6 +208,46 @@ public class ListingView extends javax.swing.JFrame {
         tbListing.setModel(model);
 
         lbTotalListing.setText(data.size() + " Listing Tercatat");
+        DefaultTableCellRenderer bodyRenderer = new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table,
+                    Object value,
+                    boolean isSelected,
+                    boolean hasFocus,
+                    int row,
+                    int column) {
+
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(
+                        table,
+                        value,
+                        isSelected,
+                        hasFocus,
+                        row,
+                        column);
+
+                lbl.setBorder(
+                        BorderFactory.createEmptyBorder(
+                                12, 12, 12, 12));
+
+                return lbl;
+            }
+        };
+        
+        
+
+        for (int i = 0; i < tbListing.getColumnCount(); i++) {
+            String columnName = tbListing.getColumnName(i).toUpperCase();
+
+            if (columnName.equals("STATUS")) {
+                tbListing.getColumnModel().getColumn(i).setCellRenderer(new StatusTableCellRenderer());
+            } else if (columnName.equals("KONDISI")) {
+                tbListing.getColumnModel().getColumn(i).setCellRenderer(new ConditionTableCellRenderer());
+            } else {
+                tbListing.getColumnModel().getColumn(i).setCellRenderer(bodyRenderer);
+            }
+        }
     }
 
     private void setupRole() {
@@ -326,6 +332,39 @@ public class ListingView extends javax.swing.JFrame {
             tfDeskripsi.setText(l.getDescription());
 
             selectedListingId = l.getListingId();
+            
+            String status = l.getStatus().toUpperCase();
+            lbStatus.setText(status);
+            
+            switch (status) {
+                case "TERSEDIA":
+                    lbStatus.setForeground(new Color(46, 204, 113));
+                    break;
+                case "TERJUAL":
+                    lbStatus.setForeground(new Color(231, 76, 60));
+                    break;
+                case "PROSES":
+                    lbStatus.setForeground(new Color(241, 196, 15));
+                    break;
+                default:
+                    lbStatus.setForeground(Color.WHITE);
+                    break;
+            }
+            
+            String kondisi = l.getCondition().toUpperCase();
+            lbKondisi.setText(kondisi);
+            
+            switch (kondisi) {
+                case "BARU":
+                    lbKondisi.setForeground(new Color(46, 204, 113));
+                    break;
+                case "BEKAS":
+                    lbKondisi.setForeground(new Color(241, 196, 15));
+                    break;
+                default:
+                    lbKondisi.setForeground(Color.WHITE);
+                    break;
+            }
 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(
@@ -333,6 +372,84 @@ public class ListingView extends javax.swing.JFrame {
                     "Gagal menampilkan detail listing: " + e.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private class StatusTableCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, 
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            
+            JLabel lbl = (JLabel) super.getTableCellRendererComponent(
+                    table, value, isSelected, hasFocus, row, column);
+            
+            lbl.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+            
+            lbl.setFont(lbl.getFont().deriveFont(Font.BOLD));
+            
+            if (value != null) {
+                String status = value.toString().toUpperCase();
+                
+                switch (status) {
+                    case "TERSEDIA":
+                        lbl.setForeground(new Color(46, 204, 113)); 
+                        break;
+                    case "TERJUAL":
+                        lbl.setForeground(new Color(231, 76, 60));
+                        break;
+                    case "PROSES":
+                        lbl.setForeground(new Color(241, 196, 15)); 
+                        break;
+                    default:
+                        lbl.setForeground(Color.WHITE);
+                        break;
+                }
+            }
+            
+            if (isSelected) {
+                lbl.setBackground(table.getSelectionBackground());
+            } else {
+                lbl.setBackground(table.getBackground());
+            }
+            
+            return lbl;
+        }
+    }
+    
+    private class ConditionTableCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, 
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            
+            JLabel lbl = (JLabel) super.getTableCellRendererComponent(
+                    table, value, isSelected, hasFocus, row, column);
+            
+            lbl.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+            lbl.setFont(lbl.getFont().deriveFont(Font.BOLD));
+            
+            if (value != null) {
+                String kondisi = value.toString().toUpperCase();
+                
+                switch (kondisi) {
+                    case "BARU":
+                        lbl.setForeground(new Color(46, 204, 113));
+                        break;
+                    case "BEKAS":
+                        lbl.setForeground(new Color(241, 196, 15));
+                        break;
+                    default:
+                        lbl.setForeground(Color.WHITE);
+                        break;
+                }
+            }
+            
+            if (isSelected) {
+                lbl.setBackground(table.getSelectionBackground());
+            } else {
+                lbl.setBackground(table.getBackground());
+            }
+            
+            return lbl;
         }
     }
 
