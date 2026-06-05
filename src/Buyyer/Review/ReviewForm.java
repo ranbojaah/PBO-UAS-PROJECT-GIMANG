@@ -89,6 +89,7 @@ public class ReviewForm extends javax.swing.JFrame {
         comment = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Form Review");
 
         jPanel1.setBackground(new java.awt.Color(18, 18, 28));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(73, 69, 82)));

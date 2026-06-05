@@ -79,6 +79,7 @@ public class GenreForm extends javax.swing.JFrame {
         btBatal = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Genre Form");
         setResizable(false);
 
         panelUtama.setBackground(new java.awt.Color(41, 41, 52));

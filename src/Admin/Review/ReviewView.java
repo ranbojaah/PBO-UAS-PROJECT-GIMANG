@@ -283,7 +283,7 @@ private void showDetailReview(String reviewId) {
         btnDeletePermanently = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Review Moderation Dashboard");
+        setTitle("Reviews");
         setBackground(new java.awt.Color(13, 18, 25));
 
         jPanel1.setBackground(new java.awt.Color(13, 18, 25));
