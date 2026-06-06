@@ -63,14 +63,6 @@ public class GameView extends javax.swing.JFrame {
                 }
             }
         });
-        
-        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
-        @Override
-        public void keyReleased(java.awt.event.KeyEvent evt) {
-                load_table(txtCari.getText());
-            }
-        });
-        
     }
     
     private void styleTable() {
@@ -542,11 +534,12 @@ public class GameView extends javax.swing.JFrame {
 
     private void txtCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyReleased
         // TODO add your handling code here:
-        
+        load_table(txtCari.getText());
     }//GEN-LAST:event_txtCariKeyReleased
 
     private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtCariActionPerformed
         // TODO add your handling code here:
+        load_table(txtCari.getText());
     }// GEN-LAST:event_txtCariActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnHapusActionPerformed
