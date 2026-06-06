@@ -3,9 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package Connection;
-
-import at.favre.lib.crypto.bcrypt.BCrypt;
-import entity.user;
 import implement.UserImpl;
 import javax.swing.JOptionPane;
 import java.sql.SQLException;
@@ -15,12 +12,12 @@ import javax.swing.ImageIcon;
  *
  * @author Bintang K
  */
-public class Register extends javax.swing.JFrame {
+public class ResetPassword extends javax.swing.JFrame {
 
     /**
-     * Creates new form Register
+     * Creates new form ResetPassword
      */
-    public Register() {
+    public ResetPassword() {
         initComponents();
         this.setLocationRelativeTo(this);
         setIconImage(new ImageIcon(getClass().getResource("/asset/gamecnh.png")).getImage());
@@ -55,37 +52,33 @@ public class Register extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        tfUsername = new javax.swing.JTextField();
+        tfFullname = new javax.swing.JTextField();
         tfPw = new javax.swing.JPasswordField();
         btnRegister = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
-        tfFullname = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         tfEmail = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        tfRole = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Register");
+        setTitle("Reset Password");
 
         jPanel1.setBackground(new java.awt.Color(18, 18, 28));
         jPanel1.setForeground(new java.awt.Color(202, 196, 212));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(202, 196, 212));
-        jLabel1.setText("Username");
+        jLabel1.setText("Fullname");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(202, 196, 212));
-        jLabel2.setText("Password");
+        jLabel2.setText("Password Baru");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(202, 196, 212));
-        jLabel3.setText("Selamat Datang");
+        jLabel3.setText("Reset Password");
 
-        tfUsername.setBackground(new java.awt.Color(41, 41, 52));
-        tfUsername.setForeground(new java.awt.Color(228, 225, 239));
-        tfUsername.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
+        tfFullname.setBackground(new java.awt.Color(41, 41, 52));
+        tfFullname.setForeground(new java.awt.Color(228, 225, 239));
+        tfFullname.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
 
         tfPw.setBackground(new java.awt.Color(41, 41, 52));
         tfPw.setForeground(new java.awt.Color(228, 225, 239));
@@ -93,21 +86,13 @@ public class Register extends javax.swing.JFrame {
 
         btnRegister.setBackground(new java.awt.Color(41, 41, 52));
         btnRegister.setForeground(new java.awt.Color(202, 196, 212));
-        btnRegister.setText("Register");
+        btnRegister.setText("Ganti Password");
         btnRegister.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
         btnRegister.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRegisterActionPerformed(evt);
             }
         });
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(202, 196, 212));
-        jLabel4.setText("Fullname");
-
-        tfFullname.setBackground(new java.awt.Color(41, 41, 52));
-        tfFullname.setForeground(new java.awt.Color(228, 225, 239));
-        tfFullname.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(202, 196, 212));
@@ -117,43 +102,29 @@ public class Register extends javax.swing.JFrame {
         tfEmail.setForeground(new java.awt.Color(228, 225, 239));
         tfEmail.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(202, 196, 212));
-        jLabel6.setText("Role");
-
-        tfRole.setBackground(new java.awt.Color(41, 41, 52));
-        tfRole.setForeground(new java.awt.Color(228, 225, 239));
-        tfRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "buyer", "seller" }));
-        tfRole.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(73, 69, 82), 1, true));
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(135, Short.MAX_VALUE)
+                .addContainerGap(139, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addGap(129, 129, 129))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(79, 79, 79)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel4))
+                        .addComponent(jLabel2)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(tfEmail)
-                            .addComponent(tfFullname)
                             .addComponent(btnRegister, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(tfPw)
-                            .addComponent(tfUsername)
-                            .addComponent(tfRole, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(tfFullname)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel1)
-                                    .addComponent(jLabel6)
                                     .addComponent(jLabel5))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(72, 72, 72))))
@@ -166,16 +137,8 @@ public class Register extends javax.swing.JFrame {
                 .addGap(23, 23, 23)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tfUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tfFullname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tfRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tfEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -185,7 +148,7 @@ public class Register extends javax.swing.JFrame {
                 .addComponent(tfPw, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnRegister)
-                .addGap(29, 29, 29))
+                .addContainerGap(64, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -196,71 +159,41 @@ public class Register extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
-        // TODO add your handling code here:
-        String username = tfUsername.getText();
-        String fullname = tfFullname.getText();
-        String role = switch(tfRole.getSelectedIndex()) {
-            case 0 -> "buyer";
-            case 1 -> "seller";
-            default -> "";
-        };
-        String email = tfEmail.getText();
-        String pw = new String(tfPw.getPassword());
-        String hashed = BCrypt.withDefaults().hashToString(8, pw.toCharArray());
-        
-        if (username.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Username tidak boleh kosong", "Error", JOptionPane.ERROR_MESSAGE);
+        String email = tfEmail.getText().trim();
+        String fullname = tfFullname.getText().trim();
+        String passwordBaru = new String(tfPw.getPassword()).trim();
+        if (email.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Email tidak boleh kosong.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (fullname.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Full name tidak boleh kosong", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Nama lengkap tidak boleh kosong.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if(role.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Role tidak boleh kosong", "Error", JOptionPane.ERROR_MESSAGE);
+        if (passwordBaru.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Password baru tidak boleh kosong.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (email.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Email tidak boleh kosong", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if(!email.contains("@") && !email.contains(".")) {
-            JOptionPane.showMessageDialog(this, "Format email salah", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (pw.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Password tidak boleh kosong", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if(pw.length() < 8) {
-            JOptionPane.showMessageDialog(this, "Password tidak boleh kurang dari delapan karakter", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-
-        try{
-            UserImpl userImpl = new UserImpl();
-            user usr = new user();
-            usr.setUsername(username);
-            usr.setFullname(fullname);
-            usr.setEmail(email);
-            usr.setPassword(hashed);
-            usr.setRole(role);
-            userImpl.register(usr);
-            JOptionPane.showMessageDialog(this, "Registrasi berhasil! Silakan login.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-            new Login().setVisible(true);
+        
+        try {
+        UserImpl userImpl = new UserImpl();
+        boolean berhasil = userImpl.resetPassword(email, fullname, passwordBaru);
+        if (berhasil) {
+            JOptionPane.showMessageDialog(this, "Password berhasil direset. Silakan login.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
+                        new Login().setVisible(true);
             this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Email atau nama lengkap tidak cocok.", "Gagal", JOptionPane.ERROR_MESSAGE);
+        }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan.\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnRegisterActionPerformed
 
@@ -281,20 +214,20 @@ public class Register extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Register.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ResetPassword.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Register.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ResetPassword.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Register.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ResetPassword.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Register.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ResetPassword.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Register().setVisible(true);
+                new ResetPassword().setVisible(true);
             }
         });
     }
@@ -304,14 +237,10 @@ public class Register extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField tfEmail;
     private javax.swing.JTextField tfFullname;
     private javax.swing.JPasswordField tfPw;
-    private javax.swing.JComboBox<String> tfRole;
-    private javax.swing.JTextField tfUsername;
     // End of variables declaration//GEN-END:variables
 }

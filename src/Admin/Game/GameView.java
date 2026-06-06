@@ -3,69 +3,247 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package Admin.Game;
-import javax.swing.table.DefaultTableModel;
-import java.sql.Connection;
+
 import Connection.Koneksi;
+import Dashboard.DashboardView;
+import entity.user;
+import java.sql.Connection;
 import java.sql.SQLException;
+import javax.swing.table.DefaultTableModel;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+
 /**
  *
  * @author Asus
  */
 public class GameView extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GameView.class.getName());
+    private user currentUser;
 
     /**
      * Creates new form GameView
      */
-    public GameView() {
+    public GameView(user usr) {
+        this.currentUser = usr;
         initComponents();
-        load_table();
+        styleTable();
+        this.setLocationRelativeTo(null);
+        checkUserRole();
+        load_table("");
+        
+        lblDetailJudul.setText("Detail - Pilih Game");
+        lblDetDeveloper.setText("-");
+        lblDetGenre.setText("-");
+        lblDetPlatform.setText("-");
+        lblDetTahun.setText("-");
+        setIconImage(new ImageIcon(getClass().getResource("/asset/gamecnh.png")).getImage());
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                int jawaban = JOptionPane.showConfirmDialog(
+                    null,
+                    "Yakin ingin menutup aplikasi?",
+                    "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                if (jawaban == JOptionPane.YES_OPTION) {
+                    dispose();
+                }
+            }
+        });
+        
+        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
+        @Override
+        public void keyReleased(java.awt.event.KeyEvent evt) {
+                load_table(txtCari.getText());
+            }
+        });
+        
     }
-    private void load_table() {
-    // 1. Membuat struktur kolom tabel
-    DefaultTableModel model = new DefaultTableModel();
-    model.addColumn("ID");
-    model.addColumn("Judul");
-    model.addColumn("Genre");
-    model.addColumn("Platform");
-    model.addColumn("Tahun");
     
-    // 2. Menarik data dari database
-    try {
-        String sql = "SELECT * FROM game ORDER BY id_game ASC";
-        
-        // Memanggil method getConnection() dari class Koneksi milikmu
-        Connection conn = Koneksi.getConnection();
-        java.sql.Statement stm = conn.createStatement();
-        java.sql.ResultSet res = stm.executeQuery(sql);
-        
-        // 3. Looping: selama data di database masih ada, masukkan ke tabel
-        while (res.next()) {
-            model.addRow(new Object[]{
-                res.getString("id_game"),
-                res.getString("judul"),
-                res.getString("genre"),
-                res.getString("platform"),
-                res.getString("tahun_rilis")
-            });
-        }
-        
-        // 4. Terapkan model ini ke JTable-mu (pastikan nama variabelnya tblGame)
-        tblGame.setModel(model);
-        
-    } catch (SQLException e) {
-        System.err.println("Gagal memuat data tabel: " + e.getMessage());
-        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
-    }
-}
+    private void styleTable() {
+        // 1. Atur tinggi baris tabel agar lebih renggang dan modern
+        tblGame.setRowHeight(48);
 
+        // 2. Atur warna background dan foreground (teks) body tabel
+        tblGame.setBackground(new Color(10, 10, 20));
+        tblGame.setForeground(Color.WHITE);
+
+        // 3. Atur warna saat baris dipilih (selected)
+        tblGame.setSelectionBackground(new Color(24, 24, 32));
+        tblGame.setSelectionForeground(Color.WHITE);
+
+        // 4. Atur warna garis grid (jika grid dinyalakan)
+        tblGame.setGridColor(new Color(30, 30, 40));
+        tblGame.setShowGrid(false); // Menyembunyikan garis default agar terlihat clean
+
+        // 5. Menghilangkan spacing antar cell default
+        tblGame.setIntercellSpacing(new Dimension(0, 0));
+
+        // 6. Kustomisasi Header Tabel
+        JTableHeader header = tblGame.getTableHeader();
+        header.setOpaque(false);
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, 
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                // Background & Teks Header (Abu-abu gelap keunguan)
+                lbl.setBackground(new Color(24, 24, 32));
+                lbl.setForeground(new Color(180, 180, 200));
+
+                // Berikan border tipis di bawah header dan padding (top, left, bottom, right)
+                lbl.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createMatteBorder(0, 0, 1, 1, new Color(45, 45, 60)),
+                    BorderFactory.createEmptyBorder(12, 12, 12, 12)
+                ));
+
+                return lbl;
+            }
+        });
+
+        // 7. Kustomisasi Cell Body (Menambahkan padding agar teks tidak mentok ke garis)
+        DefaultTableCellRenderer bodyRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, 
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                // Memberikan padding/jarak aman di dalam cell body
+                lbl.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+
+                return lbl;
+            }
+        };
+
+        // Terapkan renderer body ke semua kolom yang ada di tblGame
+        for (int i = 0; i < tblGame.getColumnCount(); i++) {
+            tblGame.getColumnModel().getColumn(i).setCellRenderer(bodyRenderer);
+        }
+    }
+    
+    private void checkUserRole() {
+        // 1. Validasi jika objek user kosong/null demi keamanan aplikasi
+        if (currentUser == null || currentUser.getRole() == null) {
+            btnTambah.setVisible(false);
+            btnHapus.setVisible(false);
+            return;
+        }
+
+        // 2. Periksa apakah role bernilai "admin" (tidak sensitif huruf besar/kecil)
+        if (currentUser.getRole().equalsIgnoreCase("admin")) {
+            btnTambah.setVisible(true);
+            btnHapus.setVisible(true);
+        } else {
+            // Jika bukan admin (misal: user biasa), sembunyikan semua tombol aksi manajemen game
+            btnTambah.setVisible(false);
+            btnHapus.setVisible(false);
+        }
+    }
+
+   public void load_table(String keyword) {
+        // 1. Membuat struktur kolom tabel (Non-editable cell)
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        model.addColumn("ID");
+        model.addColumn("Judul");
+        model.addColumn("Genre");
+        model.addColumn("Platform");
+        model.addColumn("Tahun");
+
+        // 2. Menarik data dari database menggunakan JOIN dan penambahan Filter SEARCH
+        try {
+            String sql = "SELECT g.game_id, g.title, g.platform, g.release_year, " +
+                    "GROUP_CONCAT(gr.name SEPARATOR ', ') AS nama_genre " +
+                    "FROM games g " +
+                    "LEFT JOIN gamegenre gg ON g.game_id = gg.game_id " +
+                    "LEFT JOIN genres gr ON gg.genre_id = gr.id " +
+                    "WHERE g.is_delete = FALSE ";
+
+            // Jika keyword tidak kosong, tambahkan kondisi pencarian
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql += "AND (g.title LIKE ? OR g.platform LIKE ? OR g.release_year LIKE ?) ";
+            }
+
+            sql += "GROUP BY g.game_id " +
+                   "ORDER BY g.game_id ASC";
+
+            Connection conn = Koneksi.getConnection();
+            java.sql.PreparedStatement stm = conn.prepareStatement(sql);
+
+            // Isi parameter PreparedStatement jika keyword ada
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword + "%";
+                stm.setString(1, searchPattern);
+                stm.setString(2, searchPattern);
+                stm.setString(3, searchPattern);
+            }
+
+            java.sql.ResultSet res = stm.executeQuery();
+            int totalGame = 0;
+
+            // 3. Looping data hasil query masuk ke dalam model tabel
+            while (res.next()) {
+                String genre = res.getString("nama_genre");
+                if (genre == null || genre.isEmpty()) {
+                    genre = "-"; 
+                }
+
+                model.addRow(new Object[] {
+                        res.getString("game_id"),
+                        res.getString("title"),
+                        genre,
+                        res.getString("platform"),
+                        res.getString("release_year")
+                });
+                totalGame++;
+            }
+
+            // 4. Terapkan model ke JTable komponen (tblGame)
+            tblGame.setModel(model);
+
+            // 5. Perbarui komponen label total data game
+            lblTotalGame.setText(totalGame + " Game Tercatat");
+
+            // Aplikasikan ulang custom body renderer karena model baru saja diganti
+            for (int i = 0; i < tblGame.getColumnCount(); i++) {
+                tblGame.getColumnModel().getColumn(i).setCellRenderer(tblGame.getColumnModel().getColumn(0).getCellRenderer());
+            }
+
+            res.close();
+            stm.close();
+
+        } catch (SQLException e) {
+            System.err.println("Gagal memuat data tabel: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -74,9 +252,9 @@ public class GameView extends javax.swing.JFrame {
         txtCari = new javax.swing.JTextField();
         btnHapus = new javax.swing.JButton();
         btnTambah = new javax.swing.JButton();
-        btnEdit = new javax.swing.JButton();
         lblSeparator = new javax.swing.JLabel();
         lblTotalGame = new javax.swing.JLabel();
+        btDashboard = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblGame = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
@@ -92,7 +270,7 @@ public class GameView extends javax.swing.JFrame {
         lblDetTahun = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1280, 720));
+        setTitle("Games");
 
         jPanel1.setBackground(new java.awt.Color(27, 27, 37));
 
@@ -101,7 +279,11 @@ public class GameView extends javax.swing.JFrame {
         lblGame.setForeground(new java.awt.Color(139, 128, 173));
         lblGame.setText("Semua Game");
 
-        txtCari.addActionListener(this::txtCariActionPerformed);
+        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCariKeyReleased(evt);
+            }
+        });
 
         btnHapus.setBackground(new java.awt.Color(27, 27, 37));
         btnHapus.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
@@ -115,12 +297,6 @@ public class GameView extends javax.swing.JFrame {
         btnTambah.setText("+ Tambah Game");
         btnTambah.addActionListener(this::btnTambahActionPerformed);
 
-        btnEdit.setBackground(new java.awt.Color(27, 27, 37));
-        btnEdit.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
-        btnEdit.setForeground(new java.awt.Color(206, 189, 255));
-        btnEdit.setText("Edit");
-        btnEdit.addActionListener(this::btnEditActionPerformed);
-
         lblSeparator.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
         lblSeparator.setForeground(new java.awt.Color(139, 128, 173));
         lblSeparator.setText("|");
@@ -129,6 +305,12 @@ public class GameView extends javax.swing.JFrame {
         lblTotalGame.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         lblTotalGame.setForeground(new java.awt.Color(139, 128, 173));
         lblTotalGame.setText("0 Game Tercatat");
+
+        btDashboard.setBackground(new java.awt.Color(206, 189, 255));
+        btDashboard.setFont(new java.awt.Font("Verdana", 1, 16)); // NOI18N
+        btDashboard.setForeground(new java.awt.Color(56, 19, 133));
+        btDashboard.setText("Dashboard");
+        btDashboard.addActionListener(this::btDashboardActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -143,11 +325,11 @@ public class GameView extends javax.swing.JFrame {
                 .addComponent(lblTotalGame)
                 .addGap(63, 63, 63)
                 .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
-                .addComponent(btnTambah)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnEdit)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE)
+                .addComponent(btDashboard)
                 .addGap(18, 18, 18)
+                .addComponent(btnTambah)
+                .addGap(137, 137, 137)
                 .addComponent(btnHapus)
                 .addGap(18, 18, 18))
         );
@@ -166,7 +348,7 @@ public class GameView extends javax.swing.JFrame {
                             .addComponent(btnHapus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtCari)
                             .addComponent(btnTambah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(btDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
@@ -186,6 +368,11 @@ public class GameView extends javax.swing.JFrame {
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+        });
+        tblGame.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblGameMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tblGame);
@@ -246,7 +433,7 @@ public class GameView extends javax.swing.JFrame {
                                 .addComponent(lblDetGenre, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(lblDev)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 126, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(lblDetDeveloper, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(lblInformasi)
@@ -309,53 +496,119 @@ public class GameView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
+    private void btDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDashboardActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtCariActionPerformed
+        new DashboardView().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btDashboardActionPerformed
 
-    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+    private void tblGameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblGameMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnHapusActionPerformed
+       int row = tblGame.getSelectedRow();
+        if (row == -1) {
+            return; // Jaga-jaga jika kliknya tidak valid atau di area kosong
+        }
 
-    private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
-        // TODO add your handling code here:
-        GameForm tambahForm = new GameForm(this, true);
-        tambahForm.setLocationRelativeTo(this); 
-        tambahForm.setVisible(true);
-        load_table();
-    }//GEN-LAST:event_btnTambahActionPerformed
+        // 2. Ambil game_id dari kolom pertama (index 0)
+        String gameId = tblGame.getValueAt(row, 0).toString();
 
-    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        // 3. Ambil data detail lengkap langsung dari database berdasarkan gameId
+        try {
+            String sql = "SELECT * FROM games WHERE game_id = '" + gameId + "'";
+            
+            Connection conn = Koneksi.getConnection();
+            java.sql.Statement st = conn.createStatement();
+            java.sql.ResultSet res = st.executeQuery(sql);
+
+            if (res.next()) {
+                // 4. Set teks komponen detail sesuai data dari database dengan nama kolom yang benar
+                lblDetailJudul.setText("Detail - " + res.getString("title")); // Diubah dari "judul" ke "title"
+                lblDetDeveloper.setText(res.getString("developer"));
+                
+                // Mengambil genre langsung dari kolom ke-3 (index 2) tabel GUI karena gabungan string GROUP_CONCAT
+                lblDetGenre.setText(tblGame.getValueAt(row, 2).toString()); 
+                
+                lblDetPlatform.setText(res.getString("platform"));
+                lblDetTahun.setText(res.getString("release_year")); // Diubah dari "tahun" ke "release_year"
+            }
+
+            res.close();
+            st.close();
+        } catch (java.sql.SQLException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Gagal mengambil detail game", e);
+            javax.swing.JOptionPane.showMessageDialog(this, "Error memuat detail: " + e.getMessage());
+        }
+    }//GEN-LAST:event_tblGameMouseClicked
+
+    private void txtCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyReleased
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnEditActionPerformed
+        
+    }//GEN-LAST:event_txtCariKeyReleased
+
+    private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtCariActionPerformed
+        // TODO add your handling code here:
+    }// GEN-LAST:event_txtCariActionPerformed
+
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnHapusActionPerformed
+        // TODO add your handling code here:
+        int row = tblGame.getSelectedRow();
+        if (row == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Silakan pilih game yang ingin dihapus!");
+            return;
+        }
+
+        // 2. Ambil ID Game dan Judul
+        String gameId = tblGame.getValueAt(row, 0).toString();
+        String judulGame = tblGame.getValueAt(row, 1).toString();
+
+        // 3. Konfirmasi Hapus
+        int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(this, 
+                "Apakah Anda yakin ingin menghapus game '" + judulGame + "'?\n" +
+                "Data game ini akan disembunyikan dari aplikasi.", 
+                "Konfirmasi Hapus", javax.swing.JOptionPane.YES_NO_OPTION);
+
+        if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                // 4. Update is_delete menjadi TRUE (Soft Delete)
+                // Menggunakan query UPDATE, bukan DELETE
+                String sql = "UPDATE games SET is_delete = TRUE WHERE game_id = ?";
+
+                Connection conn = Koneksi.getConnection();
+                java.sql.PreparedStatement st = conn.prepareStatement(sql);
+                st.setString(1, gameId);
+
+                int hasil = st.executeUpdate();
+
+                if (hasil > 0) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Game berhasil dihapus!");
+                    load_table(""); // Refresh tabel agar game hilang dari tampilan
+                }
+
+                st.close();
+            } catch (java.sql.SQLException e) {
+                logger.log(java.util.logging.Level.SEVERE, "Gagal menghapus game", e);
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
+            }
+        }
+    }// GEN-LAST:event_btnHapusActionPerformed
+
+    private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnTambahActionPerformed
+        // TODO add your handling code here:
+        GameForm form = new GameForm(currentUser, this);
+        form.setVisible(true);
+    }// GEN-LAST:event_btnTambahActionPerformed
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnEditActionPerformed
+        // TODO add your handling code here:
+
+    }// GEN-LAST:event_btnEditActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new GameView().setVisible(true));
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btDashboard;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnTambah;
     private javax.swing.JPanel jPanel1;

@@ -31,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -85,6 +86,23 @@ public class ListingForm extends javax.swing.JFrame {
         cbKondisi.setSelectedIndex(0);
 
         btBatal.addActionListener(evt -> this.dispose());
+        setIconImage(new ImageIcon(getClass().getResource("/asset/gamecnh.png")).getImage());
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                int jawaban = JOptionPane.showConfirmDialog(
+                    null,
+                    "Yakin ingin menutup aplikasi?",
+                    "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                if (jawaban == JOptionPane.YES_OPTION) {
+                    dispose();
+                }
+            }
+        });
     }
     
     private void populateFormForEdit(listing l) {
@@ -212,7 +230,7 @@ public class ListingForm extends javax.swing.JFrame {
         DefaultComboBoxModel<String> gameModel = new DefaultComboBoxModel<>();
         gameModel.addElement("Pilih game dari katalog"); // placeholder
         try {
-            String sql = "SELECT game_id, title FROM games ORDER BY title ASC";
+            String sql = "SELECT game_id, title FROM games WHERE is_delete = FALSE ORDER BY title ASC";
             PreparedStatement st = Koneksi.getConnection().prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {

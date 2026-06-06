@@ -6,6 +6,7 @@ package Admin.User;
 
 import implement.UserImpl;
 import java.sql.SQLException;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -20,7 +21,25 @@ public class UserForm extends javax.swing.JFrame {
      */
     public UserForm(String idUser) throws SQLException {
         initComponents();
+        this.setLocationRelativeTo(this);
         loadData(idUser);
+        setIconImage(new ImageIcon(getClass().getResource("/asset/gamecnh.png")).getImage());
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                int jawaban = JOptionPane.showConfirmDialog(
+                    null,
+                    "Yakin ingin menutup aplikasi?",
+                    "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                if (jawaban == JOptionPane.YES_OPTION) {
+                    dispose();
+                }
+            }
+        });
     }
     private void loadData(String idUser) throws SQLException {
         entity.user usr = userImpl.getById(idUser);

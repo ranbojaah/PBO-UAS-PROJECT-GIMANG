@@ -4,16 +4,21 @@
  */
 package Admin.Transaksi;
 
+import Buyyer.Review.ReviewForm;
 import Buyyer.Transaksi.TransaksiForm;
 import Dashboard.DashboardView;
+import entity.Review;
 import entity.user;
+import implement.Reviewimpl;
 import implement.TransaksiImpl;
+import interfc.ReviewInterfc;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.sql.SQLException;
 import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -45,6 +50,23 @@ public class TransaksiView extends javax.swing.JFrame {
         aturHakAkses();
         loadTableData(""); 
         initTableEvent();
+        setIconImage(new ImageIcon(getClass().getResource("/asset/gamecnh.png")).getImage());
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                int jawaban = JOptionPane.showConfirmDialog(
+                    null,
+                    "Yakin ingin menutup aplikasi?",
+                    "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                if (jawaban == JOptionPane.YES_OPTION) {
+                    dispose();
+                }
+            }
+        });
     }
     
     private void aturHakAkses() {
@@ -115,12 +137,19 @@ public class TransaksiView extends javax.swing.JFrame {
                     String gameTitle   = tbTransaksi.getValueAt(selectedRow, 1).toString();
                     String buyerName   = tbTransaksi.getValueAt(selectedRow, 2).toString();
                     String totalHarga  = tbTransaksi.getValueAt(selectedRow, 3).toString();
+                    String status      = tbTransaksi.getValueAt(selectedRow, 5).toString();
 
                     // Set text ke komponen detail
                     jLabel4.setText("Detail - " + idTransaksi);
                     jLabel6.setText(gameTitle);
                     jLabel11.setText(buyerName);
-
+                    
+                if (currentUser != null && currentUser.getRole().equalsIgnoreCase("buyer") && status.equalsIgnoreCase("selesai")) {
+                    btReview.setVisible(true);
+                } else {
+                    btReview.setVisible(false);
+                }
+                    
                     // PANGGIL METHOD DARI INTERFACE SECARA DINAMIS
                     try {
                         String namaSeller = transImpl.getSellerNameByTransactionId(idTransaksi);
@@ -142,110 +171,72 @@ public class TransaksiView extends javax.swing.JFrame {
         });
     }
     
-    private void styleTable(){
+    private void styleTable() {
         tbTransaksi.setRowHeight(48);
-
-        tbTransaksi.setBackground(new Color(10,10,20));
+        tbTransaksi.setBackground(new Color(10, 10, 20));
         tbTransaksi.setForeground(Color.WHITE);
-
-        tbTransaksi.setSelectionBackground(new Color(24,24,32));
+        tbTransaksi.setSelectionBackground(new Color(24, 24, 32));
         tbTransaksi.setSelectionForeground(Color.WHITE);
-
-        tbTransaksi.setGridColor(new Color(30,30,40));
-
+        tbTransaksi.setGridColor(new Color(30, 30, 40));
         tbTransaksi.setShowGrid(false);
+        tbTransaksi.setIntercellSpacing(new Dimension(0, 0));
 
-        tbTransaksi.setIntercellSpacing(
-                new Dimension(0,0));
-
+        // Styling Header
         JTableHeader header = tbTransaksi.getTableHeader();
-
         header.setOpaque(false);
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                lbl.setBackground(new Color(24, 24, 32));
+                lbl.setForeground(new Color(180, 180, 200));
+                lbl.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createMatteBorder(0, 0, 1, 1, new Color(45, 45, 60)),
+                        BorderFactory.createEmptyBorder(12, 12, 12, 12)
+                ));
+                return lbl;
+            }
+        });
 
-        header.setDefaultRenderer(
-            new DefaultTableCellRenderer(){
+        DefaultTableCellRenderer bodyRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                lbl.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+                return lbl;
+            }
+            
+        };
 
-                @Override
-                public Component getTableCellRendererComponent(
-                        JTable table,
-                        Object value,
-                        boolean isSelected,
-                        boolean hasFocus,
-                        int row,
-                        int column){
+        DefaultTableCellRenderer statusRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                lbl.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-                    JLabel lbl =
-                        (JLabel) super.getTableCellRendererComponent(
-                            table,
-                            value,
-                            isSelected,
-                            hasFocus,
-                            row,
-                            column);
-
-                    lbl.setBackground(
-                        new Color(24,24,32));
-
-                    lbl.setForeground(
-                        new Color(180,180,200));
-
-                    lbl.setBorder(
-                        BorderFactory.createCompoundBorder(
-
-                            BorderFactory.createMatteBorder(
-                                0,0,1,1,
-                                new Color(45,45,60)
-                            ),
-
-                            BorderFactory.createEmptyBorder(
-                                12,12,12,12
-                            )
-                        )
-                    );
-
-                    return lbl;
+                String status = value != null ? value.toString().toLowerCase() : "";
+                if (status.equals("selesai")) {
+                    lbl.setForeground(new Color(60, 221, 199)); 
+                } else if (status.equals("pending")) {
+                    lbl.setForeground(new Color(251, 191, 36)); 
+                } else if (status.equals("proses")) {
+                    lbl.setForeground(new Color(167, 139, 250)); 
+                } else {
+                    lbl.setForeground(Color.RED);
                 }
-            });
-        
-        DefaultTableCellRenderer bodyRenderer =
-            new DefaultTableCellRenderer(){
+                return lbl;
+            }
+        };
 
-                @Override
-                public Component getTableCellRendererComponent(
-                        JTable table,
-                        Object value,
-                        boolean isSelected,
-                        boolean hasFocus,
-                        int row,
-                        int column){
-
-                    JLabel lbl =
-                        (JLabel) super.getTableCellRendererComponent(
-                            table,
-                            value,
-                            isSelected,
-                            hasFocus,
-                            row,
-                            column);
-
-                    lbl.setBorder(
-                        BorderFactory.createEmptyBorder(
-                            12,12,12,12
-                        )
-                    );
-
-                    return lbl;
-                }
-            };
-
-        for(int i=0; i<tbTransaksi.getColumnCount(); i++){
-            tbTransaksi.getColumnModel()
-                .getColumn(i)
-                .setCellRenderer(bodyRenderer);
+        // Terapkan renderer ke kolom
+        for (int i = 0; i < tbTransaksi.getColumnCount(); i++) {
+            if (i == 5) { // Index 5 adalah kolom STATUS
+                tbTransaksi.getColumnModel().getColumn(i).setCellRenderer(statusRenderer);
+            } else {
+                tbTransaksi.getColumnModel().getColumn(i).setCellRenderer(bodyRenderer);
+            }
         }
     }
-   
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -280,6 +271,7 @@ public class TransaksiView extends javax.swing.JFrame {
         jLabel14 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
+        btReview = new javax.swing.JButton();
         btHapus = new javax.swing.JButton();
         btKonfirmasi = new javax.swing.JButton();
 
@@ -327,7 +319,7 @@ public class TransaksiView extends javax.swing.JFrame {
                 .addGap(38, 38, 38)
                 .addComponent(jLabel2)
                 .addGap(56, 56, 56)
-                .addComponent(tfCari)
+                .addComponent(tfCari, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
                 .addGap(38, 38, 38)
                 .addComponent(btDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -455,13 +447,22 @@ public class TransaksiView extends javax.swing.JFrame {
         jLabel18.setForeground(new java.awt.Color(148, 163, 184));
         jLabel18.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
 
+        btReview.setBackground(new java.awt.Color(167, 139, 250));
+        btReview.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        btReview.setForeground(new java.awt.Color(17, 17, 29));
+        btReview.setText("Review Transaksi");
+        btReview.setBorder(null);
+        btReview.addActionListener(this::btReviewActionPerformed);
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btReview, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14))
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -491,8 +492,12 @@ public class TransaksiView extends javax.swing.JFrame {
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addComponent(jLabel4)
-                .addGap(23, 23, 23)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btReview, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(21, 21, 21)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addComponent(jLabel9)
@@ -521,7 +526,7 @@ public class TransaksiView extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jLabel18)))
                         .addGap(68, 68, 68)))
-                .addGap(0, 59, Short.MAX_VALUE))
+                .addGap(0, 61, Short.MAX_VALUE))
         );
 
         btHapus.setBackground(new java.awt.Color(248, 113, 113));
@@ -732,6 +737,35 @@ public class TransaksiView extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btDashboardActionPerformed
 
+    // Variabel ini dideklarasikan di bawah atau di atas class (sejajar dengan selectedListingId)
+    
+    private void btReviewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btReviewActionPerformed
+       int selectedRow = tbTransaksi.getSelectedRow();
+        if (selectedRow == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih baris transaksi di tabel yang ingin di-review terlebih dahulu!", "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String idTransaksi = tbTransaksi.getValueAt(selectedRow, 0).toString();
+        String namaGame = jLabel6.getText();
+
+        try {
+            ReviewInterfc reviewImpl = new Reviewimpl();
+            java.util.List<Review> listReview = reviewImpl.getByTransaction(idTransaksi);
+
+            if (!listReview.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Transaksi ini sudah di-review!", "Informasi", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                return; 
+            }
+
+            ReviewForm formReview = new ReviewForm(currentUser, this, idTransaksi,namaGame);
+            formReview.setVisible(true);
+
+        } catch (java.sql.SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memeriksa status review: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btReviewActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -761,20 +795,17 @@ public class TransaksiView extends javax.swing.JFrame {
     private javax.swing.JButton btDashboard;
     private javax.swing.JButton btHapus;
     private javax.swing.JButton btKonfirmasi;
+    private javax.swing.JButton btReview;
     private javax.swing.JButton btTambah;
-    private javax.swing.JButton btnEdit;
-    private javax.swing.JButton btnEdit1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -784,15 +815,9 @@ public class TransaksiView extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JPanel panelActionContainer;
-    private javax.swing.JPanel panelActionContainer1;
-    private javax.swing.JPanel panelEdit;
-    private javax.swing.JPanel panelEdit1;
     private javax.swing.JTable tbTransaksi;
     private javax.swing.JTextField tfCari;
     // End of variables declaration//GEN-END:variables
